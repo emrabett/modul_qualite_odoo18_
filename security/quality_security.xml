@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        
+        <!-- Catégorie de sécurité -->
+        <record id="module_quality_category" model="ir.module.category">
+            <field name="name">Gestion de la Qualité</field>
+            <field name="description">Gestion des droits d'accès au module qualité</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Groupe Utilisateur Qualité -->
+        <record id="group_quality_user" model="res.groups">
+            <field name="name">Utilisateur Qualité</field>
+            <field name="category_id" ref="module_quality_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Accès en lecture seule aux plans de contrôle qualité</field>
+        </record>
+
+        <!-- Groupe Opérateur Qualité -->
+        <record id="group_quality_operator" model="res.groups">
+            <field name="name">Opérateur Qualité</field>
+            <field name="category_id" ref="module_quality_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_quality_user'))]"/>
+            <field name="comment">Peut exécuter les contrôles qualité et saisir les résultats</field>
+        </record>
+
+        <!-- Groupe Responsable Qualité -->
+        <record id="group_quality_manager" model="res.groups">
+            <field name="name">Responsable Qualité</field>
+            <field name="category_id" ref="module_quality_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_quality_operator'))]"/>
+            <field name="comment">Peut configurer les plans, valider les non-conformités et gérer les actions correctives</field>
+        </record>
+
+        <!-- Groupe Direction Qualité -->
+        <record id="group_quality_director" model="res.groups">
+            <field name="name">Direction Qualité</field>
+            <field name="category_id" ref="module_quality_category"/>
+            <field name="implied_ids" eval="[(4, ref('group_quality_manager'))]"/>
+            <field name="comment">Accès complet à tous les rapports et tableaux de bord</field>
+        </record>
+
+        <!-- Règles de sécurité pour les plans de contrôle -->
+        <record id="quality_plan1_comp_rule" model="ir.rule">
+            <field name="name">Plans de contrôle: multi-société</field>
+            <field name="model_id" ref="model_quality_plan1"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- Règles de sécurité pour les points de contrôle - TEMPORAIREMENT COMMENTÉES -->
+        <!-- <record id="quality_point_comp_rule" model="ir.rule">
+            <field name="name">Points de contrôle: multi-société</field>
+            <field name="model_id" ref="model_quality_point1"/>
+            <field name="domain_force">[('quality_plan_id.company_id', 'in', company_ids)]</field>
+        </record> -->
+
+        <!-- Règles de sécurité pour les contrôles qualité - TEMPORAIREMENT COMMENTÉES -->
+        <!-- <record id="quality_check_comp_rule" model="ir.rule">
+            <field name="name">Contrôles qualité: multi-société</field>
+            <field name="model_id" ref="model_quality_check1"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record> -->
+
+        <!-- Règles de sécurité pour les non-conformités - TEMPORAIREMENT COMMENTÉES -->
+        <!-- <record id="quality_nonconformity_comp_rule" model="ir.rule">
+            <field name="name">Non-conformités: multi-société</field>
+            <field name="model_id" ref="model_quality_nonconformity"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record> -->
+
+        <!-- Règles de sécurité pour les actions CAPA - TEMPORAIREMENT COMMENTÉES -->
+        <!-- <record id="quality_capa_comp_rule" model="ir.rule">
+            <field name="name">Actions CAPA: multi-société</field>
+            <field name="model_id" ref="model_quality_capa"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record> -->
+
+    </data>
+</odoo>

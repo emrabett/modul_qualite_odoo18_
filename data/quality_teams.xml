@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Équipe Qualité Réception -->
+        <record id="quality_team_reception" model="quality.team1">
+            <field name="name">Équipe Qualité Réception</field>
+            <field name="sequence">1</field>
+            <field name="color">1</field>
+        </record>
+
+        <!-- Équipe Qualité Production -->
+        <record id="quality_team_production" model="quality.team1">
+            <field name="name">Équipe Qualité Production</field>
+            <field name="sequence">2</field>
+            <field name="color">2</field>
+        </record>
+
+        <!-- Équipe Qualité Livraison -->
+        <record id="quality_team_delivery" model="quality.team1">
+            <field name="name">Équipe Qualité Livraison</field>
+            <field name="sequence">3</field>
+            <field name="color">3</field>
+        </record>
+    </data>
+</odoo>

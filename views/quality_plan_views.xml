@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Liste des Plans de Contrôle -->
+    <record id="view_quality_plan_tree" model="ir.ui.view">
+        <field name="name">quality.plan1.tree</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <list string="Plans de Contrôle Qualité" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'inactive'">
+                <field name="name"/>
+                <field name="plan_type"/>
+                <field name="product_id"/>
+                <field name="product_category_id"/>
+                <field name="frequency"/>
+                <field name="team_id1"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'inactive'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Plans de Contrôle -->
+    <record id="view_quality_plan_form" model="ir.ui.view">
+        <field name="name">quality.plan1.form</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <form string="Plan de Contrôle Qualité">
+                <header>
+                    <button name="action_activate" string="Activer" type="object" class="oe_highlight" 
+                            invisible="state != 'draft'"/>
+                    <button name="action_inactivate" string="Désactiver" type="object" 
+                            invisible="state != 'active'"/>
+                    <button name="action_draft" string="Remettre en Brouillon" type="object" 
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du Plan de Contrôle"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="plan_type"/>
+                            <field name="frequency"/>
+                            <field name="frequency_value" invisible="frequency in ['all_lots', 'on_demand']"/>
+                            
+                        </group>
+                        <group string="Produit">
+                            <field name="product_id" invisible="product_category_id"/>
+                            <field name="product_category_id" invisible="product_id"/>
+                            <field name="team_id1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Description détaillée du plan de contrôle..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Plans de Contrôle -->
+    <record id="view_quality_plan_search" model="ir.ui.view">
+            <field name="name">quality.plan1.search</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Plans de Contrôle">
+                <field name="name"/>
+                <field name="plan_type"/>
+                <field name="product_id"/>
+                <field name="product_category_id"/>
+                <field name="state"/>
+                <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Actif" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Inactif" name="inactive" domain="[('state', '=', 'inactive')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Type de Plan" name="group_plan_type" context="{'group_by': 'plan_type'}"/>
+                    <filter string="Équipe" name="group_team" context="{'group_by': 'team_id1'}"/>
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Plans de Contrôle -->
+    <record id="action_list_view_quality_plan_tree" model="ir.actions.act_window">
+        <field name="name">Plans de Contrôle Qualité</field>
+        <field name="res_model">quality.plan1</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_group_team': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier plan de contrôle qualité !
+            </p>
+            <p>
+                Les plans de contrôle qualité définissent les procédures et points de contrôle
+                à appliquer pour assurer la qualité de vos produits.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue Kanban Dashboard des Plans de Contrôle (Style Enterprise) -->
+    <record id="view_quality_plan_dashboard_kanban" model="ir.ui.view">
+        <field name="name">quality.plan1.dashboard.kanban</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <kanban string="Plans de Contrôle Qualité" class="o_quality_kanban" create="0" can_open="0">
+                <field name="name"/>
+                <field name="plan_type"/>
+                <field name="product_id"/>
+                <field name="state"/>
+                <field name="check_count"/>
+                <field name="team_id1"/>
+                <templates>
+                    <t t-name="menu">
+                        <div t-if="widget.editable" role="menuitem">
+                            <a class="dropdown-item ps-0" type="open">Configuration</a>
+                        </div>
+                    </t>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold fs-4 ms-2"/>
+                        <div class="small ms-2">
+                            <i class="fa fa-cog" role="img" aria-label="Type de Plan" title="Type de Plan"></i>&#160;<field name="plan_type"/>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <button class="btn btn-primary ms-2" name="%(action_list_view_quality_plan_tree)d" type="action">
+                                    <span><field name="name"/> - Plans</span>
+                                </button>
+                            </div>
+                            <a name="%(action_quality_check1_team_filtered)d" type="action" class="col-6">
+                                <field name="check_count"/>
+                                Contrôles en cours
+                            </a>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue Kanban Standard des Plans de Contrôle -->
+    <record id="view_quality_plan_kanban" model="ir.ui.view">
+        <field name="name">quality.plan1.kanban</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <kanban string="Plans de Contrôle Qualité" class="o_kanban_small_column" default_group_by="team_id1" group_create="false" group_expand="true">
+                <field name="name"/>
+                <field name="check_count"/>
+                <field name="product_id"/>
+                <field name="state"/>
+                <field name="plan_type"/>
+                <field name="team_id1"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'inactive'"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="plan_type"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <field name="check_count"/> contrôles
+                                        </div>
+                                    </div>
+                                    <div class="oe_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <i class="fa fa-users" role="img" aria-label="Équipe" title="Équipe"></i>
+                                            <field name="team_id1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Plans de Contrôle (Dashboard) -->
+    <record id="action_quality_overview" model="ir.actions.act_window">
+        <field name="name">Vue d'ensemble Qualité</field>
+        <field name="res_model">quality.plan1</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_quality_plan_kanban"/>
+        <field name="context">{'search_default_group_team': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier plan de contrôle qualité !
+            </p>
+            <p>
+                Les plans de contrôle qualité sont organisés par équipes pour une meilleure gestion.
+                Chaque équipe a ses propres plans de contrôle spécialisés.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue Kanban Alternative avec Groupement Explicite -->
+    <record id="view_quality_plan_kanban_teams" model="ir.ui.view">
+        <field name="name">quality.plan1.kanban.teams</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <kanban string="Plans de Contrôle par Équipes" class="o_kanban_small_column" default_group_by="team_id1" group_create="false" group_expand="true" group_open="true">
+                <field name="name"/>
+                <field name="check_count"/>
+                <field name="product_id"/>
+                <field name="state"/>
+                <field name="plan_type"/>
+                <field name="team_id1"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'inactive'"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="plan_type"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <field name="check_count"/> contrôles
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <i class="fa fa-users" role="img" aria-label="Équipe" title="Équipe"></i>
+                                            <field name="team_id1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour Vue Kanban par Équipes -->
+    <record id="action_quality_plan_kanban_teams" model="ir.actions.act_window">
+        <field name="name">Plans de Contrôle par Équipes</field>
+        <field name="res_model">quality.plan1</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_quality_plan_kanban_teams"/>
+        <field name="context">{'search_default_group_team': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier plan de contrôle qualité !
+            </p>
+            <p>
+                Les plans de contrôle qualité sont organisés par équipes pour une meilleure gestion.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue Kanban de Débogage pour Équipes -->
+    <record id="view_quality_plan_kanban_debug" model="ir.ui.view">
+        <field name="name">quality.plan1.kanban.debug</field>
+        <field name="model">quality.plan1</field>
+        <field name="arch" type="xml">
+            <kanban string="Plans de Contrôle - Débogage Équipes" class="o_kanban_small_column" default_group_by="team_id1" group_create="false" group_expand="true" group_open="true">
+                <field name="name"/>
+                <field name="check_count"/>
+                <field name="product_id"/>
+                <field name="state"/>
+                <field name="plan_type"/>
+                <field name="team_id1"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'inactive'"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="plan_type"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <field name="check_count"/> contrôles
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <i class="fa fa-users" role="img" aria-label="Équipe" title="Équipe"></i>
+                                            <field name="team_id1"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <small class="text-muted">ID: <field name="id"/></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action de Débogage -->
+    <record id="action_quality_plan_debug" model="ir.actions.act_window">
+        <field name="name">Plans de Contrôle - Débogage</field>
+        <field name="res_model">quality.plan1</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_quality_plan_kanban_debug"/>
+        <field name="context">{'search_default_group_team': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Vue de débogage pour les plans de contrôle !
+            </p>
+            <p>
+                Cette vue affiche les plans de contrôle avec des informations de débogage
+                pour identifier les problèmes d'affichage des équipes.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action Vue d'ensemble Qualité Corrigée -->
+    <record id="action_quality_overview_fixed" model="ir.actions.act_window">
+        <field name="name">Vue d'ensemble Qualité</field>
+        <field name="res_model">quality.plan1</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_quality_plan_kanban_teams"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier plan de contrôle qualité !
+            </p>
+            <p>
+                Les plans de contrôle qualité sont organisés par équipes pour une meilleure gestion.
+                Chaque équipe a ses propres plans de contrôle spécialisés.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Équipes Qualité (Style Enterprise) -->
+    <record id="view_quality_team_dashboard_kanban" model="ir.ui.view">
+        <field name="name">quality.team1.dashboard.kanban</field>
+        <field name="model">quality.team1</field>
+        <field name="arch" type="xml">
+            <kanban highlight_color="color" class="o_quality_kanban" create="0" can_open="0">
+                <field name="name"/>
+                <field name="check_count"/>
+                <field name="alert_count"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="menu">
+                        <div t-if="widget.editable" role="menuitem">
+                            <a class="dropdown-item ps-0" type="open">Configuration</a>
+                        </div>
+                        <div t-if="widget.editable" role="menuitem" aria-haspopup="true">
+                            <field name="color" widget="kanban_color_picker"/>
+                        </div>
+                    </t>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold fs-4 ms-2"/>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <button class="btn btn-primary ms-2" name="%(action_quality_alert1_team_filtered)d" type="action">
+                                    <span><field name="alert_count"/> Alertes Qualité</span>
+                                </button>
+                            </div>
+                            <a name="%(action_quality_check1_team_filtered)d" type="action" class="col-6">
+                                <field name="check_count"/>
+                                Contrôles en cours
+                            </a>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action Vue d'ensemble Qualité (Style Enterprise) -->
+    <record id="action_quality_overview_enterprise" model="ir.actions.act_window">
+        <field name="name">Vue d'ensemble Qualité</field>
+        <field name="res_model">quality.team1</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_id" ref="view_quality_team_dashboard_kanban"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première équipe qualité !
+            </p>
+            <p>
+                Les équipes qualité organisent les différents plans de contrôle et alertes
+                selon les rôles (équipes) qui en ont besoin.
+            </p>
+        </field>
+    </record>
+
+   
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue pour stock.lot avec alertes qualité -->
+    <record id="stock_production_lot_view_form_quality1" model="ir.ui.view">
+        <field name="name">stock.production.lot.view.form.quality1</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]/button" position="before">
+                <button name="action_lot_open_quality_alerts1" icon="oi-search" class="oe_stat_button" type="object"
+                        invisible="quality_alert_qty1 == 0" groups="quality_management.group_quality_user">
+                    <div class="o_field_widget o_stat_info">
+                        <div class="o_field_widget o_stat_info align-items-baseline flex-row gap-1 me-1">
+                          <span class="o_stat_text">Alertes Qualité:</span>
+                          <span class="o_stat_value">
+                              <field name="quality_alert_qty1" widget="statinfo" nolabel="1" class="mr4"/>
+                          </span>
+                        </div>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vue pour stock.lot avec contrôles qualité -->
+    <record id="stock_production_lot_form_quality_control1" model="ir.ui.view">
+        <field name="name">stock.lot.form.quality.control1</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_quality_checks1" type="object"
+                    invisible="quality_check_qty1 == 0"
+                    icon="fa-check" class="oe_stat_button" groups="quality_management.group_quality_user">
+                    <field string="Contrôles Qualité" name="quality_check_qty1" widget="statinfo"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

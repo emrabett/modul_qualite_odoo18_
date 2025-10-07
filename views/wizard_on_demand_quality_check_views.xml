@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour le wizard de contrôle qualité à la demande -->
+    <record id="quality_check_on_demand1_view_form" model="ir.ui.view">
+        <field name="name">quality.check.on.demand1.form</field>
+        <field name="model">quality.check.on.demand1</field>
+        <field name="arch" type="xml">
+            <form string="Contrôle Qualité à la Demande">
+                <header>
+                    <button string="Confirmer" name="action_confirm" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Contrôle Qualité à la Demande</h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="picking_id1" invisible="not picking_id1"/>
+                            <field name="production_id1" invisible="not production_id1"/>
+                            <field name="product_id"/>
+                            <field name="quality_point_id1"/>
+                        </group>
+                        <group>
+                            <field name="measure_on" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Section Lot/Numéro de Série -->
+                    <group string="Lot/Numéro de Série" invisible="not show_lot_number">
+                        <field name="lot_id1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour le wizard à la demande -->
+    <record id="action_quality_check_on_demand1" model="ir.actions.act_window">
+        <field name="name">Contrôle Qualité à la Demande</field>
+        <field name="res_model">quality.check.on.demand1</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

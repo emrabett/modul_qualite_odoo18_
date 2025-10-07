@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Liste des Équipes Qualité -->
+    <record id="view_quality_team1_tree" model="ir.ui.view">
+        <field name="name">quality.team1.tree</field>
+        <field name="model">quality.team1</field>
+        <field name="arch" type="xml">
+            <list string="Équipes Qualité">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="check_count"/>
+                <field name="alert_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Équipes Qualité -->
+    <record id="view_quality_team1_form" model="ir.ui.view">
+        <field name="name">quality.team1.form</field>
+        <field name="model">quality.team1</field>
+        <field name="arch" type="xml">
+            <form string="Équipe Qualité">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom de l'équipe qualité"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="sequence"/>
+                            <field name="color"/>
+                        </group>
+                        <group string="Responsable">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Membres" name="members">
+                        </page>
+                        <page string="Description" name="description">
+                        </page>
+                        <page string="Statistiques" name="statistics">
+                            <group>
+                                <group string="Contrôles">
+                                </group>
+                                <group string="Performance">
+                                    <field name="check_count" readonly="1"/>
+                                    <field name="alert_count" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Équipes Qualité -->
+    <record id="view_quality_team1_search" model="ir.ui.view">
+        <field name="name">quality.team1.search</field>
+        <field name="model">quality.team1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Équipes Qualité">
+                <field name="name"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Société" name="group_company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Équipes Qualité -->
+    <record id="view_quality_team1_kanban" model="ir.ui.view">
+        <field name="name">quality.team1.kanban</field>
+        <field name="model">quality.team1</field>
+        <field name="arch" type="xml">
+            <kanban string="Équipes Qualité" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="check_count"/>
+                <field name="alert_count"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click" t-att-style="background-color: rgb(record.color.value ? record.color.value : 1);">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <div class="o_kanban_record_subtitle">
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <span class="badge badge-info"><field name="check_count"/> contrôles</span>
+                                            <span class="badge badge-warning"><field name="alert_count"/> alertes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Équipes Qualité -->
+    <record id="action_quality_team1" model="ir.actions.act_window">
+        <field name="name">Équipes Qualité</field>
+        <field name="res_model">quality.team1</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_id" ref="view_quality_team1_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première équipe qualité !
+            </p>
+            <p>
+                Les équipes qualité regroupent les utilisateurs responsables
+                des contrôles et de la gestion de la qualité.
+            </p>
+        </field>
+    </record>
+</odoo>

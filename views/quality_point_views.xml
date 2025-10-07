@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Liste des Points de Contrôle -->
+    <record id="view_quality_point1_tree" model="ir.ui.view">
+        <field name="name">quality.point1.tree</field>
+        <field name="model">quality.point1</field>
+        <field name="arch" type="xml">
+            <list string="Points de Contrôle Qualité">
+                <field name="sequence" widget="handle"/>
+                <field name="name" decoration-bf="1"/>
+                <field name="title" optional="show"/>
+                <field name="product_ids" widget="many2many_tags" optional="show"/>
+                <field name="product_category_ids" widget="many2many_tags" optional="hide"/>
+                <field name="picking_type_ids" widget="many2many_tags" optional="show" string="Opérations"/>
+                <field name="test_type_id" optional="show" string="Type"/>
+                <field name="team_id1" optional="show"/>
+                <field name="user_id" optional="hide" widget='many2one_avatar_user'/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Points de Contrôle -->
+    <record id="view_quality_point1_form" model="ir.ui.view">
+        <field name="name">quality.point1.form</field>
+        <field name="model">quality.point1</field>
+        <field name="arch" type="xml">
+            <form string="Point de Contrôle Qualité">
+                <header>
+                    <button name="action_activate" string="Activer" type="object" class="oe_highlight" 
+                            invisible="state != 'draft'"/>
+                    <button name="action_inactivate" string="Désactiver" type="object" 
+                            invisible="state != 'active'"/>
+                    <button name="action_draft" string="Remettre en Brouillon" type="object" 
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_see_quality_checks" type="object" class="oe_stat_button" icon="fa-check">
+                            <field string="Contrôles Qualité" name="check_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <h2><field name="name" readonly="1"/></h2>
+                    <group>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="title"/>
+                            <field name="product_ids" widget="many2many_tags"/>
+                            <field name="product_category_ids" widget="many2many_tags"/>
+                            <field name="picking_type_ids" string="Types d'Opérations" widget="many2many_tags"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                        </group>
+                        <group>
+                            <field name="test_type" invisible="1"/>
+                            <field name="measure_on"/>
+                            <field name="measure_frequency_type"/>
+                            <field string="Type" name="test_type_id" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="team_id1" options="{'no_open': True, 'no_create': True}"/>
+                            
+                            <!-- <field name="sequence"/> -->
+                        </group>
+                    </group>
+                    
+                    <!-- Configuration des Mesures -->
+                    <group string="Configuration des Mesures" invisible="test_type != 'measure'">
+                        <group>
+                            <field name="norm"/>
+                            <field name="norm_unit"/>
+                        </group>
+                        <group>
+                            <field name="tolerance_min"/>
+                            <field name="tolerance_max"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Configuration de la Fréquence -->
+                    
+                        <group>
+                            
+                            <field name="measure_frequency_value" invisible="measure_frequency_type in ['all', 'on_demand']"/>
+                        </group>
+                        <group>
+                            <field name="measure_frequency_unit_value" invisible="measure_frequency_type != 'periodical'"/>
+                            <field name="measure_frequency_unit" invisible="measure_frequency_type != 'periodical'"/>
+                        </group>
+                    
+                    
+                    <notebook>
+                        <page string="Instructions" name="instructions">
+                            <field name="note" placeholder="Describe the quality check to do..."/>
+                        </page>
+                        <page string="Notes" name="Notes">
+                            <field name="reason" string="Note" placeholder="Describe why you need to perform this quality check..."/>
+                        </page>
+                        <page string="Message d'Échec" name="failure_message" invisible="test_type != 'measure' and test_type != 'spreadsheet' and test_type != 'passfail'">
+                            <field name="failure_message" placeholder="Message affiché en cas d'échec du contrôle..."/>
+                        </page>
+                        <page string="Statistiques" name="statistics" invisible="test_type != 'measure'">
+                            <group>
+                                <group>
+                                    <field name="average" readonly="1"/>
+                                    <field name="standard_deviation" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="check_count" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Points de Contrôle -->
+    <record id="view_quality_point1_search" model="ir.ui.view">
+        <field name="name">quality.point1.search</field>
+        <field name="model">quality.point1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Points de Contrôle">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="test_type"/>
+                <field name="product_ids" widget="many2many_tags"/>
+                <field name="product_category_ids" widget="many2many_tags"/>
+                <field name="team_id1"/>
+                <field name="user_id"/>
+                <field name="state"/>
+                <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Actif" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Inactif" name="inactive" domain="[('state', '=', 'inactive')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Type de Test" name="group_test_type" context="{'group_by': 'test_type'}"/>
+                    <filter string="Équipe" name="group_team" context="{'group_by': 'team_id1'}"/>
+                    <filter string="Responsable" name="group_responsible" context="{'group_by': 'user_id'}"/>
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Points de Contrôle -->
+    <record id="view_quality_point1_kanban" model="ir.ui.view">
+        <field name="name">quality.point1.kanban</field>
+        <field name="model">quality.point1</field>
+        <field name="arch" type="xml">
+            <kanban string="Points de Contrôle Qualité" class="o_kanban_small_column" default_group_by="state">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="test_type"/>
+                <field name="team_id1"/>
+                <field name="user_id"/>
+                <field name="check_count"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <div t-if="record.title.value" class="o_kanban_record_subtitle">
+                                            <field name="title"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'inactive'"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="test_type"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <field name="check_count"/> contrôles
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Points de Contrôle -->
+    <record id="action_quality_point1" model="ir.actions.act_window">
+        <field name="name">Points de Contrôle Qualité</field>
+        <field name="res_model">quality.point1</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_id" ref="view_quality_point1_tree"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier point de contrôle qualité !
+            </p>
+            <p>
+                Les points de contrôle définissent les tests et mesures à effectuer
+                pour assurer la qualité de vos produits.
+            </p>
+        </field>
+    </record>
+</odoo>

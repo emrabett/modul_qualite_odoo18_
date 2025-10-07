@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Points de contrôle pour RÉCEPTIONS -->
+    <record id="quality_point_reception_incoming" model="quality.point1">
+        <field name="name">Contrôle Réception Matières Premières</field>
+        <field name="title">Vérification qualité à la réception</field>
+        <field name="picking_type_ids" eval="[(6, 0, [ref('stock.picking_type_in')])]"/>
+        <field name="product_ids" eval="[(6, 0, [])]"/>
+        <field name="product_category_ids" eval="[(6, 0, [])]"/>
+        <field name="measure_on">product</field>
+        <field name="test_type">passfail</field>
+        <field name="team_id1" ref="quality_management.quality_team1"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="check_count">1</field>
+        <field name="is_lot_tested_fractionally">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Points de contrôle pour LIVRAISONS -->
+    <record id="quality_point_delivery_outgoing" model="quality.point1">
+        <field name="name">Contrôle Livraison Produits Finis</field>
+        <field name="title">Vérification qualité avant livraison</field>
+        <field name="picking_type_ids" eval="[(6, 0, [ref('stock.picking_type_out')])]"/>
+        <field name="product_ids" eval="[(6, 0, [])]"/>
+        <field name="product_category_ids" eval="[(6, 0, [])]"/>
+        <field name="measure_on">product</field>
+        <field name="test_type">passfail</field>
+        <field name="team_id1" ref="quality_management.quality_team1"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="check_count">1</field>
+        <field name="is_lot_tested_fractionally">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Points de contrôle pour FABRICATION -->
+    <record id="quality_point_manufacturing_mrp" model="quality.point1">
+        <field name="name">Contrôle Fabrication Produits</field>
+        <field name="title">Vérification qualité pendant la fabrication</field>
+        <field name="picking_type_ids" eval="[(6, 0, [ref('mrp.picking_type_mrp_operation')])]"/>
+        <field name="product_ids" eval="[(6, 0, [])]"/>
+        <field name="product_category_ids" eval="[(6, 0, [])]"/>
+        <field name="measure_on">product</field>
+        <field name="test_type">passfail</field>
+        <field name="team_id1" ref="quality_management.quality_team1"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="check_count">1</field>
+        <field name="is_lot_tested_fractionally">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Points de contrôle pour TRANSFERTS INTERNES -->
+    <record id="quality_point_internal_transfer" model="quality.point1">
+        <field name="name">Contrôle Transfert Interne</field>
+        <field name="title">Vérification qualité lors des transferts internes</field>
+        <field name="picking_type_ids" eval="[(6, 0, [ref('stock.picking_type_internal')])]"/>
+        <field name="product_ids" eval="[(6, 0, [])]"/>
+        <field name="product_category_ids" eval="[(6, 0, [])]"/>
+        <field name="measure_on">product</field>
+        <field name="test_type">passfail</field>
+        <field name="team_id1" ref="quality_management.quality_team1"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="check_count">1</field>
+        <field name="is_lot_tested_fractionally">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Points de contrôle pour OPÉRATIONS (tous types) -->
+    <record id="quality_point_operation_all" model="quality.point1">
+        <field name="name">Contrôle Opération Général</field>
+        <field name="title">Vérification qualité générale des opérations</field>
+        <field name="picking_type_ids" eval="[(6, 0, [
+            ref('stock.picking_type_in'),
+            ref('stock.picking_type_out'),
+            ref('stock.picking_type_internal'),
+            ref('mrp.picking_type_mrp_operation')
+        ])]"/>
+        <field name="product_ids" eval="[(6, 0, [])]"/>
+        <field name="product_category_ids" eval="[(6, 0, [])]"/>
+        <field name="measure_on">operation</field>
+        <field name="test_type">passfail</field>
+        <field name="team_id1" ref="quality_management.quality_team1"/>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="check_count">1</field>
+        <field name="is_lot_tested_fractionally">False</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

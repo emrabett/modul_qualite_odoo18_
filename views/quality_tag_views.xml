@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- VUES POUR QUALITY.TAG1 (Style Enterprise) -->
+    
+    <!-- Vue Recherche des Tags Qualité -->
+    <record id="view_quality_tag1_search" model="ir.ui.view">
+        <field name="name">quality.tag1.view.search</field>
+        <field name="model">quality.tag1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Tags Qualité">
+                <field name="name"/>
+                <separator/>
+                <filter string="Couleur" name="color" domain="[('color', '>', 0)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Couleur" name="group_color" context="{'group_by': 'color'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Liste des Tags Qualité -->
+    <record id="view_quality_tag1_tree" model="ir.ui.view">
+        <field name="name">quality.tag1.view.list</field>
+        <field name="model">quality.tag1</field>
+        <field name="arch" type="xml">
+            <list string="Tags Qualité" editable="bottom" sample="1">
+                <field name="name" string="Nom du Tag"/>
+                <field name="color" widget="color_picker" string="Couleur"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Tags Qualité -->
+    <record id="view_quality_tag1_form" model="ir.ui.view">
+        <field name="name">quality.tag1.view.form</field>
+        <field name="model">quality.tag1</field>
+        <field name="arch" type="xml">
+            <form string="Tag Qualité">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du tag..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="name" string="Nom du Tag"/>
+                            <field name="color" widget="color_picker" string="Couleur" 
+                                   help="Couleur utilisée dans les vues kanban"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Tags Qualité -->
+    <record id="view_quality_tag1_kanban" model="ir.ui.view">
+        <field name="name">quality.tag1.view.kanban</field>
+        <field name="model">quality.tag1</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex align-items-center">
+                            <div t-if="record.color.value" 
+                                 t-att-style="'background-color: ' + record.color.value + '; width: 20px; height: 20px; border-radius: 50%; margin-right: 10px;'">
+                            </div>
+                            <field name="name" class="fw-bolder"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour les Tags Qualité -->
+    <record id="action_quality_tag1" model="ir.actions.act_window">
+        <field name="name">Tags Qualité</field>
+        <field name="res_model">quality.tag1</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_quality_tag1_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Ajoutez un nouveau tag qualité
+            </p>
+            <p>
+                Les tags qualité permettent de catégoriser et organiser
+                les alertes et contrôles qualité.
+            </p>
+        </field>
+    </record>
+</odoo>

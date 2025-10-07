@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Tags Qualité -->
+        <record id="quality_tag1_urgent" model="quality.tag1">
+            <field name="name">Urgent</field>
+            <field name="color">1</field>
+        </record>
+
+        <record id="quality_tag1_critical" model="quality.tag1">
+            <field name="name">Critique</field>
+            <field name="color">2</field>
+        </record>
+
+        <record id="quality_tag1_high_priority" model="quality.tag1">
+            <field name="name">Priorité Haute</field>
+            <field name="color">3</field>
+        </record>
+
+        <record id="quality_tag1_medium_priority" model="quality.tag1">
+            <field name="name">Priorité Moyenne</field>
+            <field name="color">4</field>
+        </record>
+
+        <record id="quality_tag1_low_priority" model="quality.tag1">
+            <field name="name">Priorité Basse</field>
+            <field name="color">5</field>
+        </record>
+
+        <record id="quality_tag1_safety" model="quality.tag1">
+            <field name="name">Sécurité</field>
+            <field name="color">6</field>
+        </record>
+
+        <record id="quality_tag1_environmental" model="quality.tag1">
+            <field name="name">Environnemental</field>
+            <field name="color">7</field>
+        </record>
+
+        <record id="quality_tag1_customer_complaint" model="quality.tag1">
+            <field name="name">Réclamation Client</field>
+            <field name="color">8</field>
+        </record>
+
+        <record id="quality_tag1_supplier_issue" model="quality.tag1">
+            <field name="name">Problème Fournisseur</field>
+            <field name="color">9</field>
+        </record>
+
+        <record id="quality_tag1_internal_audit" model="quality.tag1">
+            <field name="name">Audit Interne</field>
+            <field name="color">10</field>
+        </record>
+    </data>
+</odoo>

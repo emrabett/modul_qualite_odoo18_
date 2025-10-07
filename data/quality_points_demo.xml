@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Données de démo temporairement désactivées pour éviter l'erreur d'équipe qualité -->
+        <!-- 
+        <record id="quality_point_demo_mo" model="quality.point1">
+            <field name="name">Contrôle Qualité MO - Test</field>
+            <field name="title">Vérification de la qualité du produit fini</field>
+            <field name="test_type_id" ref="quality_test_type_instructions"/>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="measure_on">product</field>
+            <field name="measure_frequency_type">all</field>
+            <field name="active">True</field>
+            <field name="state">active</field>
+            <field name="note">&lt;p&gt;Vérifiez que le produit fini respecte les standards de qualité.&lt;/p&gt;</field>
+        </record>
+        -->
+    </data>
+</odoo>

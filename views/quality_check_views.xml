@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Liste des Contrôles Qualité -->
+    <record id="view_quality_check1_tree" model="ir.ui.view">
+        <field name="name">quality.check1.tree</field>
+        <field name="model">quality.check1</field>
+        <field name="arch" type="xml">
+            <list string="Contrôles Qualité" default_order="id desc" sample="1" decoration-info="quality_state == 'none'">
+                <field name="name" decoration-bf="1"/>
+                <field name="measure_on" optional="hide"/>
+                <field name='product_id' optional="show"/>
+                <field name="lot_id" column_invisible="context.get('show_lots_text')"/>
+                <field name="lot_name" column_invisible="not context.get('show_lots_text')"/>
+                <field name="picking_id1" optional="hide" string="Transfert"/>
+                <field name="control_date" string="Date de Contrôle" optional="show"/>
+                <field name="user_id" string="Contrôlé par" optional="show" widget='many2one_avatar_user'/>
+                <field name="point_id1" optional="hide"/>
+                <field name="team_id1" optional="hide"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                <field name="quality_state" optional="show" widget='badge' decoration-success="quality_state == 'pass'" decoration-info="quality_state == 'none'" decoration-danger="quality_state == 'fail'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Contrôles Qualité -->
+    <record id="view_quality_check1_form" model="ir.ui.view">
+        <field name="name">quality.check1.form</field>
+        <field name="model">quality.check1</field>
+        <field name="arch" type="xml">
+            <form string="Contrôle Qualité">
+                <header>
+                    <button name="do_pass" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Réussi" data-hotkey="q"/>
+                    <button name="do_pass" type="object" invisible="quality_state != 'fail'" groups="quality.group_quality_manager" string="Réussi" data-hotkey="q"/>
+                    <button name="do_fail" type="object" class="btn-primary" invisible="quality_state != 'none'" string="Échoué" data-hotkey="w"/>
+                    <button name="do_fail" type="object" invisible="quality_state != 'pass'" groups="quality.group_quality_manager" string="Échoué" data-hotkey="w"/>
+                    <button name="do_measure" type="object" invisible="test_type != 'measure' or quality_state != 'none'" string="Mesurer" data-hotkey="v"/>
+                    <button name="do_alert" type="object" invisible="alert_ids or quality_state != 'pass'" string="Créer Alerte" data-hotkey="g"/>
+                    <button name="do_alert" type="object" class="btn-primary" invisible="alert_ids or quality_state != 'fail'" string="Créer Alerte" data-hotkey="g"/>
+                    <field name="quality_state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_see_alerts" icon="fa-bell" type="object" class="oe_stat_button" invisible="alert_count == 0">
+                            <field name="alert_count" string="Alertes" widget="statinfo"/>
+                        </button>
+                        <button
+                            string="Spreadsheet"
+                            class="oe_stat_button"
+                            name="action_open_spreadsheet"
+                            icon="fa-th" type="object"
+                            groups="quality.group_quality_user"
+                            invisible="test_type != 'spreadsheet'">
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" invisible="1"/>
+                            <field name="product_id" invisible="measure_on == 'operation'"/>
+                            <field name="measure_on" readonly="point_id1"/>
+                            <field name="show_lot_text" invisible="1"/>
+                            <field name="move_line_id" invisible="1"/>
+                            <field name="product_tracking" invisible="1"/>
+                            <field name="is_lot_tested_fractionally" invisible="1"/>
+                            <field name="lot_name" invisible="product_tracking == 'none' or not show_lot_text or measure_on != 'move_line' or not move_line_id"/>
+                            <field name="lot_id" invisible="product_tracking == 'none' or show_lot_text or measure_on != 'move_line'"/>
+                            <label for="qty_line" invisible="not move_line_id or quality_state == 'fail'"/>
+                            <label for="qty_line" invisible="not move_line_id or quality_state != 'fail'" string="Quantité Échouée"/>
+                            <div class="o_row" invisible="not move_line_id">
+                                <field name="qty_line"/> 
+                                <field name="uom_id" groups="uom.group_uom"/>
+                            </div>
+                            <field name="failure_location_id" invisible="not failure_location_id" readonly="True"/>
+                            <label for="qty_to_test" invisible="not move_line_id or measure_on != 'move_line' or not is_lot_tested_fractionally"/>
+                            <div class="o_row" invisible="not move_line_id or measure_on != 'move_line' or not is_lot_tested_fractionally">
+                                <field name="qty_to_test"/> 
+                                <field name="uom_id" groups="uom.group_uom"/>
+                            </div>
+                            <label for="qty_tested" invisible="measure_on != 'move_line' or not is_lot_tested_fractionally"/>
+                            <div class="o_row" invisible="measure_on != 'move_line' or not is_lot_tested_fractionally">
+                                <field name="qty_tested" readonly="quality_state != 'none'"/> 
+                                <field name="uom_id" groups="uom.group_uom"/>
+                            </div>
+                            <field name="test_type" invisible="1"/>
+                            <field name="measure" invisible="test_type != 'measure'"/>
+                            <field name="alert_ids" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="picking_id1" invisible="quality_state in ('pass', 'fail') and not picking_id1"/>
+                            <field name="production_id1" invisible="quality_state in ('pass', 'fail') and not production_id1"/>
+                           <field name="point_id1"/>
+                            <field string="Type" name="test_type_id" options="{'no_open': True, 'no_create': True}" readonly="point_id1"/>
+                            <!-- <field name="spreadsheet_check_cell" invisible="test_type != 'spreadsheet'"/> -->
+                            <field name="control_date" invisible="1"/>
+                            <field name="team_id1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="user_id" string="Personne de Contrôle" invisible="1"/>
+                            <field name="partner_id" string="Partenaire" invisible="not partner_id"/>
+                        </group>
+                    </group>
+                    <group invisible="test_type != 'picture'">
+                        <field name="picture" widget="image"/>
+                    </group>
+                      <notebook>
+                          <page string="Notes" name="notes">
+                              <group>
+                                  <field string="Instructions" name="note"/>
+                                  <field string="Notes" name="additional_note"/>
+                              </group>
+                          </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Contrôles Qualité -->
+    <record id="view_quality_check1_search" model="ir.ui.view">
+        <field name="name">quality.check1.search</field>
+        <field name="model">quality.check1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Contrôles Qualité">
+                <field name="product_id" string="Produit" filter_domain="['|', ('product_id', 'ilike', self), ('lot_id', 'ilike', self)]"/>
+                <field name="picking_id1"/>
+                <field name="lot_id" groups="stock.group_production_lot"/>
+                <field name="team_id1"/>
+                <filter string="En Cours" name="progress" domain="[('quality_state', '=', 'none')]"/>
+                <filter string="Réussi" name="passed" domain="[('quality_state', '=', 'pass')]"/>
+                <filter string="Échoué" name="failed" domain="[('quality_state', '=', 'fail')]"/>
+                <separator/>
+                <filter string="Date de Contrôle" name="control_date" date="control_date"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="État" name="state" context="{'group_by': 'quality_state'}"/>
+                    <filter string="Produit" name="by_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="Point de Contrôle" name="groupby_point_id" context="{'group_by': 'point_id1'}"/>
+                    <filter string="Équipe" name="groupby_team_id" context="{'group_by': 'team_id1'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Contrôles Qualité -->
+    <record id="view_quality_check1_kanban" model="ir.ui.view">
+        <field name="name">quality.check1.kanban</field>
+        <field name="model">quality.check1</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column" sample="1">
+                <field name="quality_state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="row">
+                            <field name="name" class="col-6 fw-bolder"/>
+                            <div class="col-6">
+                                <span t-attf-class="float-end text-end badge #{['none'].indexOf(record.quality_state.raw_value) > -1 ? 'text-bg-secondary' : ['fail'].indexOf(record.quality_state.raw_value) > -1 ? 'text-bg-danger' : ['done'].indexOf(record.quality_state.raw_value) > -1 ? 'text-bg-primary' : 'text-bg-success'}"><field name="quality_state"/></span>
+                            </div>
+                        </div>
+                        <div class="row text-muted">
+                            <field name="product_id" class="col-8"/>
+                            <field name="lot_id" class="col-4"/>
+                        </div>
+                        <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue Graph des Contrôles Qualité -->
+    <record id="view_quality_check1_graph" model="ir.ui.view">
+        <field name="name">quality.check1.graph</field>
+        <field name="model">quality.check1</field>
+        <field name="arch" type="xml">
+            <graph string="Analyse Contrôles Qualité" sample="1">
+                <field name="control_date" interval="day"/>
+                <field name="quality_state"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vue Pivot des Contrôles Qualité -->
+    <record id="view_quality_check1_pivot" model="ir.ui.view">
+         <field name="name">quality.check1.pivot</field>
+         <field name="model">quality.check1</field>
+         <field name="arch" type="xml">
+             <pivot string="Analyse Contrôles Qualité" sample="1">
+                 <field name="control_date" type="col" interval="day"/>
+                 <field name="product_id" type="row"/>
+             </pivot>
+         </field>
+    </record>
+
+    <!-- Action pour ouvrir les Contrôles Qualité -->
+    <record id="action_quality_check_analysis" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">graph,pivot,kanban,list,form</field>
+        <field name="context">{'search_default_state': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun contrôle qualité
+            </p>
+        </field>
+    </record>
+    
+    <!-- Action pour ouvrir les Contrôles Qualité par Équipe -->
+    <record id="action_quality_check1_team" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('team_id1', '=', active_id)]</field>
+        <field name="context">{
+            'default_team_id1': active_id,
+            'search_default_team_id1': [active_id],
+            'search_default_progress': "1"}
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Aucun contrôle qualité trouvé
+            </p><p>
+              Définissez des Points de Contrôle Qualité afin de générer automatiquement
+              des contrôles qualité aux bonnes opérations logistiques : transferts, ordres de fabrication.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_quality_check" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,kanban,form,pivot,graph,activity</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Aucun contrôle qualité trouvé
+            </p><p>
+              Définissez des Points de Contrôle Qualité afin de générer automatiquement
+              des contrôles qualité aux bonnes opérations logistiques : transferts, ordres de fabrication.
+            </p>
+        </field>
+    </record>
+    
+    <record id="action_quality_check1" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,kanban,form</field>
+    </record>
+
+    <!-- Action pour les contrôles qualité des ordres de fabrication -->
+    <record id="quality_check_action_mo1" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('production_id1', '=', active_id)]</field>
+        <field name="context">{
+            'search_default_production_id1': [active_id],
+            'default_production_id1': active_id,
+            'search_default_quality_checks': 1,
+         }</field>
+    </record>
+    <!-- Action pour ouvrir les Contrôles Qualité par Équipe (avec filtrage) -->
+    <record id="action_quality_check1_team_filtered" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('team_id1', '=', active_id)]</field>
+        <field name="context">{
+            'default_team_id1': active_id,
+            'search_default_team_id1': [active_id],
+            'search_default_progress': 1}
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Aucun contrôle qualité trouvé
+            </p><p>
+              Définissez des Points de Contrôle Qualité afin de générer automatiquement
+              des contrôles qualité aux bonnes opérations logistiques : transferts, ordres de fabrication.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action SPC pour les Contrôles Qualité -->
+    <record id="action_quality_check1_spc" model="ir.actions.act_window">
+        <field name="name">SPC Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_quality_check1_graph"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Pas encore de données !
+            </p>
+        </field>
+    </record>
+
+    <!-- Action pour les Contrôles Qualité d'un Picking -->
+    <record id="action_quality_check1_picking" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Action pour les Contrôles Qualité d'un Lot -->
+    <record id="action_quality_check1_production_lot" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{
+            'search_default_lot_id': [active_id],
+            'default_lot_id': active_id,
+            'create': 0}
+        </field>
+    </record>
+
+    <!-- Après quality_check_action_mo1 -->
+    <record id="quality_check_action_picking1" model="ir.actions.act_window">
+        <field name="name">Contrôles Qualité</field>
+        <field name="res_model">quality.check1</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('picking_id1', '=', active_id)]</field>
+        <field name="context">{
+            'search_default_picking_id1': [active_id],
+            'default_picking_id1': active_id,
+            'search_default_quality_checks': 1,
+         }</field>
+    </record>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Stages d'Alertes Qualité -->
+        <record id="quality_alert_stage1_new" model="quality.alert.stage1">
+            <field name="name">Nouvelle</field>
+            <field name="sequence">1</field>
+            <field name="folded">False</field>
+            <field name="done">False</field>
+        </record>
+
+        <record id="quality_alert_stage1_in_progress" model="quality.alert.stage1">
+            <field name="name">En Cours</field>
+            <field name="sequence">2</field>
+            <field name="folded">False</field>
+            <field name="done">False</field>
+        </record>
+
+        <record id="quality_alert_stage1_resolved" model="quality.alert.stage1">
+            <field name="name">Résolue</field>
+            <field name="sequence">3</field>
+            <field name="folded">False</field>
+            <field name="done">True</field>
+        </record>
+
+        <record id="quality_alert_stage1_cancelled" model="quality.alert.stage1">
+            <field name="name">Annulée</field>
+            <field name="sequence">4</field>
+            <field name="folded">True</field>
+            <field name="done">True</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- VUES POUR QUALITY.ALERT.STAGE1 (Style Enterprise) -->
+    
+    <!-- Vue Liste des Stages d'Alertes Qualité -->
+    <record id="view_quality_alert_stage1_tree" model="ir.ui.view">
+        <field name="name">quality.alert.stage1.list</field>
+        <field name="model">quality.alert.stage1</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name" string="Stage Name"/>
+                <field name="folded"/>
+                <field name="done"/>
+                <field name="team_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Stages d'Alertes Qualité -->
+    <record id="view_quality_alert_stage1_kanban" model="ir.ui.view">
+        <field name="name">quality.alert.stage1.kanban</field>
+        <field name="model">quality.alert.stage1</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card">
+                        <field name="name" class="fw-bolder"/>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Stages d'Alertes Qualité -->
+    <record id="view_quality_alert_stage1_form" model="ir.ui.view">
+        <field name="name">quality.alert.stage1.form</field>
+        <field name="model">quality.alert.stage1</field>
+        <field name="arch" type="xml">
+            <form string="Stage d'Alerte Qualité">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du stage..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="sequence"/>
+                            <field name="folded"/>
+                            <field name="done"/>
+                        </group>
+                        <group string="Équipes">
+                            <field name="team_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Stages d'Alertes Qualité -->
+    <record id="view_quality_alert_stage1_search" model="ir.ui.view">
+        <field name="name">quality.alert.stage1.search</field>
+        <field name="model">quality.alert.stage1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Stages d'Alertes">
+                <field name="name"/>
+                <field name="team_ids"/>
+                <separator/>
+                <filter string="Repliés" name="folded" domain="[('folded', '=', True)]"/>
+                <filter string="Terminés" name="done" domain="[('done', '=', True)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Équipe" name="group_team" context="{'group_by': 'team_ids'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action pour les Stages d'Alertes Qualité -->
+    <record id="action_quality_alert_stage1" model="ir.actions.act_window">
+        <field name="name">Stages d'Alertes Qualité</field>
+        <field name="res_model">quality.alert.stage1</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_quality_alert_stage1_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez un nouveau stage d'alerte qualité
+            </p>
+            <p>
+                Les stages d'alertes qualité définissent les différentes étapes
+                qu'une alerte qualité doit traverser.
+            </p>
+        </field>
+    </record>
+</odoo>

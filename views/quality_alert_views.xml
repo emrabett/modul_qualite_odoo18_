@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Liste des Alertes Qualité -->
+    <record id="view_quality_alert1_tree" model="ir.ui.view">
+        <field name="name">quality.alert1.tree</field>
+        <field name="model">quality.alert1</field>
+        <field name="arch" type="xml">
+            <list string="Alertes Qualité">
+                <field name="name"/>
+                <field name="title" optional="show"/>
+                <field name="product_tmpl_id" optional="show"/>
+                <field name="product_id" optional="hide" groups="product.group_product_variant"/>
+                <field name="lot_id1" optional="hide" groups="stock.group_production_lot"/>
+                <field name="reason_id1" optional="show"/>
+                <field name="priority" optional="show" widget="priority"/>
+                <field name="user_id" optional="show" widget="many2one_avatar_user"/>
+                <field name="check_id1" optional="show"/>
+                <field name="description" optional="hide"/>
+                <field name="partner_id" optional="hide"/>
+                <field name="activity_exception_decoration" widget="activity_exception"/>
+                <field name="date_assign" optional="show"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                <field name="team_id1" optional="show"/>
+                <field name="stage_id1" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Alertes Qualité -->
+    <record id="view_quality_alert1_form" model="ir.ui.view">
+        <field name="name">quality.alert1.form</field>
+        <field name="model">quality.alert1</field>
+        <field name="arch" type="xml">
+            <form string="Alerte Qualité">
+                <header>
+                    <field name="stage_id1" widget="statusbar" options="{'clickable': '1', 'fold_field': 'folded'}"/>
+                </header>
+                <sheet>
+                    <field name="company_id" invisible="1"/>
+                    <field name="product_id" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_see_check" type="object" invisible="not check_id1" class="oe_stat_button" icon="fa-check-square-o">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="check_id1" readonly="1"/></span>
+                                <span class="o_stat_text">Contrôle Qualité</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="product_tmpl_id"/>
+                            <field name="product_id" groups="product.group_product_variant"/>
+                            <field name="lot_id1" context="{'default_product_id': product_id}" groups="stock.group_production_lot"/>
+                            <field name="picking_id1"/>
+                        </group>
+                        <group>
+                            <field name="team_id1"/>
+                            <field name="user_id" domain="[('share', '=', False)]"/>
+                            <field name="tag_ids1" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="reason_id1"/>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Description du problème..."/>
+                        </page>
+                        <page string="Actions Correctives" name="corrective_actions">
+                            <field name="action_corrective" placeholder="Décrivez les actions correctives effectuées..."/>
+                        </page>
+                        <page string="Actions Préventives" name="preventive_actions">
+                            <field name="action_preventive" placeholder="Décrivez les actions préventives effectuées..."/>
+                        </page>
+                        <page string="Divers" name="miscellaneous">
+                            <group>
+                                <group>
+                                    <field name="partner_id"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                    <field name="email_cc" groups="base.group_no_one"/>
+                                </group>
+                                <group>
+                                    <field name="date_assign"/>
+                                    <field name="date_close" invisible="not date_close"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Alertes Qualité -->
+    <record id="view_quality_alert1_search" model="ir.ui.view">
+        <field name="name">quality.alert1.search</field>
+        <field name="model">quality.alert1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Alertes Qualité">
+                <field name="title" string="Alerte Qualité" filter_domain="[
+                    '|', '|', '|', ('title', 'ilike', self), ('product_id', 'ilike', self), ('product_tmpl_id', 'ilike', self), ('lot_id1', 'ilike', self)]"/>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="lot_id1"/>
+                <field name="reason_id1"/>
+                <field name="user_id"/>
+                <field name="team_id1"/>
+                <separator/>
+                <filter string="Mes Alertes" name="my_alerts" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Étape" name="group_stage" context="{'group_by': 'stage_id1'}"/>
+                    <filter string="Équipe" name="group_team" context="{'group_by': 'team_id1'}"/>
+                    <filter string="Responsable" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Priorité" name="group_priority" context="{'group_by': 'priority'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Kanban des Alertes Qualité -->
+    <record id="view_quality_alert1_kanban" model="ir.ui.view">
+        <field name="name">quality.alert1.kanban</field>
+        <field name="model">quality.alert1</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id1" class="o_kanban_small_column" sample='1'>
+                <templates>
+                    <t t-name="card">
+                        <field name="tag_ids1"/>
+                        <field name="product_tmpl_id" class="fw-bolder"/>
+                        <field name="display_name"/>
+                        <footer>
+                            <div class="d-flex">
+                                <field name="priority" widget="priority"/>
+                                <field name="activity_ids" widget="kanban_activity" class="ms-2"/>
+                            </div>
+                            <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Alertes Qualité -->
+    <record id="action_quality_alert" model="ir.actions.act_window">
+        <field name="name">Alertes Qualité</field>
+        <field name="res_model">quality.alert1</field>
+        <field name="view_mode">kanban,list,form,pivot,graph,calendar,activity</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle alerte qualité
+            </p>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Alertes Qualité par Équipe -->
+    <record id="action_quality_alert1_team" model="ir.actions.act_window">
+        <field name="name">Alertes Qualité</field>
+        <field name="res_model">quality.alert1</field>
+        <field name="view_mode">kanban,list,form,pivot,graph,calendar,activity</field>
+        <field name="domain">[('team_id1', '=', active_id)]</field>
+        <field name="context">{'default_team_id1': active_id,
+                               'search_default_team_id1': [active_id]}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune alerte qualité trouvée pour cette équipe
+            </p>
+            <p>
+                Les alertes qualité de cette équipe s'afficheront ici.
+                Les alertes sont créées automatiquement lors des contrôles échoués
+                ou peuvent être créées manuellement.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir les Alertes Qualité par Équipe (avec filtrage) -->
+    <record id="action_quality_alert1_team_filtered" model="ir.actions.act_window">
+        <field name="name">Alertes Qualité</field>
+        <field name="res_model">quality.alert1</field>
+        <field name="view_mode">kanban,list,form,pivot,graph,calendar</field>
+        <field name="domain">[('team_id1', '=', active_id)]</field>
+        <field name="context">{'default_team_id1': active_id, 'search_default_team_id1': [active_id]}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune alerte qualité trouvée pour cette équipe
+            </p>
+            <p>
+                Les alertes qualité de cette équipe s'afficheront ici.
+                Les alertes sont créées automatiquement lors des contrôles échoués
+                ou peuvent être créées manuellement.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Vue Pivot pour les Alertes Qualité (Style Enterprise) -->
+    <record id="view_quality_alert1_pivot" model="ir.ui.view">
+        <field name="name">quality.alert1.pivot</field>
+        <field name="model">quality.alert1</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse Alertes Qualité" sample="1">
+                <field name="stage_id1" type="col"/>
+                <field name="team_id1" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue Graphique pour les Alertes Qualité (Style Enterprise) -->
+    <record id="view_quality_alert1_graph" model="ir.ui.view">
+        <field name="name">quality.alert1.graph</field>
+        <field name="model">quality.alert1</field>
+        <field name="arch" type="xml">
+            <graph string="Analyse Alertes Qualité" sample="1">
+                <field name="reason_id1"/>
+                <field name="stage_id1"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vue Calendrier pour les Alertes Qualité (Style Enterprise) -->
+    <record id="view_quality_alert1_calendar" model="ir.ui.view">
+        <field name="name">quality.alert1.calendar</field>
+        <field name="model">quality.alert1</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <calendar string="Alertes Qualité" date_start="date_assign" color="user_id" quick_create="0" event_limit="5">
+                <field name="user_id" filters="1"/>
+                <field name="product_id"/>
+                <field name="team_id1"/>
+                <field name="partner_id" avatar_field="avatar_128"/>
+                <field name="reason_id1"/>
+            </calendar>
+        </field>
+    </record>
+    <!-- Action pour ouvrir Analyse Alertes Qualité (Style Enterprise) -->
+    <record id="action_quality_alert11" model="ir.actions.act_window">
+        <field name="name">Alertes Qualité</field>
+        <field name="res_model">quality.alert1</field>
+        <field name="view_mode">graph,pivot,kanban,list,form,calendar</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune alerte qualité
+            </p>
+        </field>
+    </record>
+    
+    <record id="action_quality_alert1" model="ir.actions.act_window">
+        <field name="name">Alertes Qualité</field>
+        <field name="res_model">quality.alert1</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+</odoo>

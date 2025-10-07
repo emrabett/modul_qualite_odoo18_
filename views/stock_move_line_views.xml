@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue pour stock.move.line avec contrôles qualité -->
+    <record id="view_stock_move_line_detailed_operation_tree_inherit_quality1" model="ir.ui.view">
+        <field name="name">stock.move.line.operations.list.inherit.quality1</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_uom_id']" position="after">
+                <field name="check_state1" column_invisible="True"/>
+                <button type="object" class="btn-info" name="action_open_quality_check_wizard1" icon="fa-check" invisible="check_state1 != 'in_progress'" title="Contrôle Qualité"/>
+                <button type="object" class="btn-danger" name="action_open_quality_check_wizard1" icon="fa-check" invisible="check_state1 != 'fail'" title="Contrôle Qualité"/>
+                <button type="object" class="btn-success" name="action_open_quality_check_wizard1" icon="fa-check" invisible="check_state1 != 'pass'" title="Contrôle Qualité"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

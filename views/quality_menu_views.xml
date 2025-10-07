@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Principal Qualité -->
+    <menuitem id="menu_quality_root"
+              name="Qualité"
+              sequence="50"
+              web_icon="quality_management,static/description/icon.png"/>
+
+    <!-- Menu Vue d'ensemble -->
+    <menuitem id="menu_quality_overview"
+              name="Vue d'ensemble"
+              parent="menu_quality_root"
+              sequence="10"
+              action="action_quality_overview_enterprise"/>
+
+    <!-- Menu contrôles qualité -->
+    <menuitem id="menu_quality_control"
+              name="Contrôles Qualité"
+              parent="menu_quality_root"
+              sequence="20"
+              />
+
+    <!-- Menu Points de Contrôle -->
+    <menuitem id="menu_quality_points"
+              name="Points de Contrôle"
+              parent="menu_quality_control"
+              action="action_quality_point1"
+              sequence="10"/>
+
+    <!-- Menu Contrôles Qualité -->
+    <menuitem id="menu_quality_checks"
+              name="Contrôles Qualité"
+              parent="menu_quality_control"
+              action="action_quality_check"
+              sequence="20"/>
+
+    <!-- Menu Alertes Qualité -->
+    <menuitem id="menu_quality_alerts"
+              name="Alertes Qualité"
+              parent="menu_quality_control"
+              action="action_quality_alert"
+              sequence="30"/>
+
+    <!-- Menu Configuration -->
+    <menuitem id="menu_quality_config"
+              name="Configuration"
+              parent="menu_quality_root"
+              sequence="30"
+              />
+
+    <!-- Menu Équipes Qualité -->
+    <menuitem id="menu_quality_teams"
+              name="Équipes Qualité"
+              parent="menu_quality_config"
+              action="action_quality_team1"
+              sequence="10"/>
+
+    <!-- Menu Stages d'Alertes Qualité -->
+    <menuitem id="menu_quality_alert_stages"
+              name="Stages d'Alertes"
+              parent="menu_quality_config"
+              action="action_quality_alert_stage1"
+              sequence="15"/>
+
+    <!-- Menu Tags Qualité -->
+    <menuitem id="menu_quality_tags"
+              name="Tags Qualité"
+              parent="menu_quality_config"
+              action="action_quality_tag1"
+              sequence="20"/>
+
+    <!-- Menu Templates Spreadsheet Qualité -->
+    <menuitem id="menu_quality_spreadsheet_templates"
+              name="Templates Spreadsheet"
+              parent="menu_quality_config"
+              action="quality_spreadsheet_template_action_config"
+              sequence="25"/>
+
+    <!-- Menu Plans de Contrôle -->
+    <!-- <menuitem id="menu_quality_plan_tree"
+              name="Plans de Contrôle"
+              parent="menu_quality_config"
+              sequence="20"
+              action="action_list_view_quality_plan_tree"/> -->
+
+    <!-- Menu Plans de Contrôle par Équipes -->
+    <!-- <menuitem id="menu_quality_plan_teams"
+              name="Plans par Équipes"
+              parent="menu_quality_config"
+              sequence="25"
+              action="action_quality_plan_kanban_teams"/> -->
+
+    <!-- Menu Débogage -->
+    <!-- <menuitem id="menu_quality_plan_debug"
+              name="Débogage Plans"
+              parent="menu_quality_config"
+              sequence="30"
+              action="action_quality_plan_debug"/> -->
+    <!-- Menu analyse qualité -->
+    <menuitem id="menu_quality_analysis"
+              name="Analyse"
+              parent="menu_quality_root"
+              sequence="40"/>
+    <!-- Menu analyse contrôle qualité -->
+    <menuitem id="menu_quality_analysis_control"
+              name="Analyse Contrôle Qualité"
+              parent="menu_quality_analysis"
+              action="action_quality_check_analysis"
+              sequence="10"/>
+    <!-- Menu analyse alertes qualité -->
+    <menuitem id="menu_quality_analysis_alerts11"
+              name="Alertes Qualité"
+              parent="menu_quality_analysis"
+              action="action_quality_alert11"
+              sequence="20"/>
+
+    <!-- Menu Contrôles inventaire -->
+        <menuitem
+        id="quality_control_menu_product1"
+        name="Products"
+        parent="quality_management.menu_quality_root"
+        sequence="18"/>
+
+    <menuitem
+        id="quality_product_menu_product_template1"
+        name="Products"
+        action="stock.product_template_action_product"
+        parent="quality_management.quality_control_menu_product1"
+        sequence="5"/>
+
+    <menuitem
+        id="quality_control_menu_product_variant1"
+        name="Product Variants"
+        action="product.product_normal_action"
+        parent="quality_management.quality_control_menu_product1"
+        groups="product.group_product_variant"
+        sequence="10"/>
+
+    <menuitem 
+        id="quality_control_menu_traceability1"
+        name="Lots/Serial Numbers"
+        action="stock.action_production_lot_form"
+        parent="quality_management.quality_control_menu_product1"
+        groups="stock.group_production_lot"
+        sequence="15"/>
+
+</odoo>

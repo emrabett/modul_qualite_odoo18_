@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    
+    <!-- Dashboard principal -->
+    <t t-name="quality_management.dashboard">
+        <div class="quality-dashboard">
+            <div class="o_control_panel">
+                <div class="o_cp_top">
+                    <div class="o_cp_top_left">
+                        <h2>Dashboard Qualité</h2>
+                    </div>
+                    <div class="o_cp_top_right">
+                        <button class="btn btn-secondary" t-on-click="_onRefresh">
+                            <i class="fa fa-refresh"/> Actualiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="container-fluid">
+                <div class="row">
+                    <!-- Métriques principales -->
+                    <div class="col-lg-8">
+                        <div class="quality-metrics">
+                            <!-- Les métriques seront chargées dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <!-- Actions rapides -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Actions Rapides</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <i class="fa fa-plus"/> Nouveau Contrôle
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <i class="fa fa-exclamation-triangle"/> Non-conformités
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <i class="fa fa-tasks"/> Actions CAPA
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <i class="fa fa-chart-bar"/> Rapports
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+    <!-- Métriques du dashboard -->
+    <t t-name="quality_management.dashboard_metrics">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="quality-metric metric-success">
+                    <h4><i class="fa fa-check-circle"/> Contrôles Réussis</h4>
+                    <h2><t t-esc="metrics.passed || 0"/></h2>
+                    <small>Total: <t t-esc="metrics.total || 0"/></small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quality-metric metric-warning">
+                    <h4><i class="fa fa-clock-o"/> En Cours</h4>
+                    <h2><t t-esc="metrics.in_progress || 0"/></h2>
+                    <small>En attente de validation</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quality-metric metric-danger">
+                    <h4><i class="fa fa-times-circle"/> Échecs</h4>
+                    <h2><t t-esc="metrics.failed || 0"/></h2>
+                    <small>Nécessitent une action</small>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="quality-metric metric-info">
+                    <h4><i class="fa fa-exclamation-triangle"/> Non-conformités</h4>
+                    <h2><t t-esc="metrics.nonconformities || 0"/></h2>
+                    <small>À traiter</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Graphiques -->
+        <div class="row mt-4">
+            <div class="col-lg-6">
+                <div class="quality-chart">
+                    <h5>Évolution des Contrôles</h5>
+                    <div class="chart-container">
+                        <!-- Graphique d'évolution -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="quality-chart">
+                    <h5>Répartition par Type</h5>
+                    <div class="chart-container">
+                        <!-- Graphique de répartition -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+</templates>

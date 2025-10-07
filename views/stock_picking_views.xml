@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue pour stock.picking avec contrôles qualité -->
+    <record id="stock_picking_view_form_inherit_quality1" model="ir.ui.view">
+        <field name="name">stock.picking.view.form.inherit.quality1</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_validate'][hasclass('o_btn_validate')]" position="before">
+                <button string="Contrôles Qualité" name="check_quality1" type="object" class="oe_highlight" data-hotkey="shift+z"
+                        invisible="not quality_check_todo1 or state in ('done', 'cancel')" groups="quality_management.group_quality_user"/>
+                <button name="button_quality_alert1" groups="quality_management.group_quality_user" type="object" string="Alerte Qualité" context="{'default_picking_id1': id}" class="oe_highlight" invisible="not quality_check_fail1 or quality_alert_count1 != 0" data-hotkey="shift+q"/>
+            </xpath>
+            <div name="button_box" position="inside">
+                <button name="open_quality_alert_picking1" groups="quality_management.group_quality_user" type="object" class="oe_stat_button" icon="fa-bell" invisible="quality_alert_count1 == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="quality_alert_count1"/></span>
+                        <span class="o_stat_text">Alerte Qualité</span>
+                    </div>
+                </button>
+                <button name="%(quality_check_action_picking1)d" groups="quality_management.group_quality_user" invisible="not check_ids1 or quality_check_fail1 or not quality_check_todo1" type="action" class="oe_stat_button" icon="fa-check">
+                    <span class="o_stat_text">Contrôles Qualité</span>
+                </button>
+                <button name="%(quality_check_action_picking1)d" groups="quality_management.group_quality_user" invisible="not check_ids1 or quality_check_fail1 or quality_check_todo1" type="action" class="oe_stat_button text-success" icon="fa-check">
+                    <span class="o_stat_text text-success">Contrôles Qualité</span>
+                </button>
+                <button name="%(quality_check_action_picking1)d" groups="quality_management.group_quality_user" invisible="not check_ids1 or not quality_check_fail1" type="action" class="oe_stat_button text-danger" icon="fa-check">
+                    <span class="o_stat_text text-danger">Contrôles Qualité</span>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <!-- Vue tree pour stock.picking -->
+    <record id="stock_picking_view_tree_inherit_quality1" model="ir.ui.view">
+        <field name="name">stock.picking.view.tree.inherit.quality1</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="field[@name='company_id']" position="after">
+                <field name="quality_check_todo1" column_invisible="True"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vue search pour stock.picking -->
+    <record id="stock_picking_view_search_inherit_quality1" model="ir.ui.view">
+        <field name="name">stock.picking.view.search.inherit.quality1</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+           <xpath expr="//filter[@name='backorder']" position="before">
+                <filter name="quality_check_todo1" string="Contrôles Qualité" domain="[('quality_check_todo1', '=', True)]"/>
+           </xpath>
+        </field>
+    </record>
+</odoo>

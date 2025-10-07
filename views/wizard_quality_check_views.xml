@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire pour le wizard de contrôle qualité -->
+    <record id="quality_check_wizard1_view_form" model="ir.ui.view">
+        <field name="name">quality.check.wizard1.form</field>
+        <field name="model">quality.check.wizard1</field>
+        <field name="arch" type="xml">
+            <form string="Contrôle Qualité">
+                <header>
+                    <button string="Précédent" name="action_generate_previous_window" type="object" 
+                            invisible="position_current_check == 1" class="btn-secondary"/>
+                    <button string="Mesurer" name="do_measure" type="object" 
+                            invisible="test_type != 'measure' or quality_state != 'none'" data-hotkey="m"/>
+                    <button string="Réussir" name="do_pass" type="object" 
+                            invisible="quality_state != 'none'" data-hotkey="p"/>
+                    <button string="Échouer" name="do_fail" type="object" 
+                            invisible="quality_state != 'none'" data-hotkey="f"/>
+                    <button string="Confirmer Mesure" name="confirm_measure" type="object" 
+                            invisible="test_type != 'measure' or quality_state != 'none'" data-hotkey="c"/>
+                    <button string="Corriger Mesure" name="correct_measure" type="object" 
+                            invisible="test_type != 'measure' or quality_state == 'none'" data-hotkey="r"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="title" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_id" readonly="1"/>
+                            <field name="lot_name" readonly="1" invisible="not show_lot_text"/>
+                            <field name="lot_line_id" readonly="1" invisible="show_lot_text"/>
+                            <field name="qty_line" readonly="1"/>
+                            <field name="qty_to_test" readonly="1"/>
+                            <field name="qty_tested" invisible="measure_on != 'move_line'"/>
+                        </group>
+                        <group>
+                            <field name="test_type" readonly="1"/>
+                            <field name="measure_on" readonly="1"/>
+                            <field name="norm_unit" readonly="1"/>
+                            <field name="uom_id" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Section Mesure -->
+                    <group string="Mesure" invisible="test_type != 'measure'">
+                        <group>
+                            <field name="measure"/>
+                            <field name="warning_message" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Section Photo -->
+                    <group string="Photo" invisible="test_type != 'picture'">
+                        <field name="picture" widget="image" class="oe_avatar"/>
+                    </group>
+                    
+                    <!-- Section Notes -->
+                    <group string="Notes">
+                        <field name="note" nolabel="1"/>
+                        <field name="additional_note" nolabel="1"/>
+                    </group>
+                    
+                    <!-- Section Échec -->
+                    <group string="Gestion de l'Échec" invisible="quality_state != 'fail'">
+                        <field name="failure_message" readonly="1"/>
+                        <field name="failure_location_id" invisible="measure_on != 'move_line'"/>
+                        <field name="qty_failed" invisible="measure_on != 'move_line'"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue formulaire pour l'échec -->
+    <record id="quality_check_wizard1_form_failure" model="ir.ui.view">
+        <field name="name">quality.check.wizard1.form.failure</field>
+        <field name="model">quality.check.wizard1</field>
+        <field name="arch" type="xml">
+            <form string="Contrôle Qualité Échoué">
+                <header>
+                    <button string="Confirmer Échec" name="confirm_fail" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Contrôle Qualité Échoué</h1>
+                    </div>
+                    <group>
+                        <field name="product_id" readonly="1"/>
+                        <field name="failure_message" readonly="1"/>
+                    </group>
+                    <group string="Gestion de l'Échec">
+                        <field name="failure_location_id" invisible="measure_on != 'move_line'"/>
+                        <field name="qty_failed" invisible="measure_on != 'move_line'"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour le wizard -->
+    <record id="action_quality_check_wizard1" model="ir.actions.act_window">
+        <field name="name">Contrôle Qualité</field>
+        <field name="res_model">quality.check.wizard1</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_check_ids': check_ids, 'default_current_check_id': current_check_id}</field>
+    </record>
+</odoo>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Types de tests par défaut pour quality.point.test_type1 -->
+        
+        <!-- Type de test : Instructions -->
+        <record id="quality_test_type_instructions" model="quality.point.test_type1">
+            <field name="name">Instructions</field>
+            <field name="technical_name">instructions</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Type de test : Prendre une photo -->
+        <record id="quality_test_type_picture" model="quality.point.test_type1">
+            <field name="name">Prendre une Photo</field>
+            <field name="technical_name">picture</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Type de test : Pass - Fail -->
+        <record id="quality_test_type_passfail" model="quality.point.test_type1">
+            <field name="name">Pass - Fail</field>
+            <field name="technical_name">passfail</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Type de test : Mesure -->
+        <record id="quality_test_type_measure" model="quality.point.test_type1">
+            <field name="name">Mesure</field>
+            <field name="technical_name">measure</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Type de test : Tableur -->
+        <record id="quality_test_type_spreadsheet" model="quality.point.test_type1">
+            <field name="name">Tableur</field>
+            <field name="technical_name">spreadsheet</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Types de tests supplémentaires pour votre module -->
+        
+        <!-- Type de test : Checklist -->
+        <record id="quality_test_type_checklist" model="quality.point.test_type1">
+            <field name="name">Checklist</field>
+            <field name="technical_name">checklist</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Type de test : Inspection visuelle -->
+        <record id="quality_test_type_visual" model="quality.point.test_type1">
+            <field name="name">Inspection Visuelle</field>
+            <field name="technical_name">visual</field>
+            <field name="active">True</field>
+        </record>
+        
+        <!-- Type de test : Test fonctionnel -->
+        <record id="quality_test_type_functional" model="quality.point.test_type1">
+            <field name="name">Test Fonctionnel</field>
+            <field name="technical_name">functional</field>
+            <field name="active">True</field>
+        </record>
+        
+    </data>
+</odoo>

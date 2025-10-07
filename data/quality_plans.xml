@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Plans de Contrôle pour l'Équipe Réception -->
+        <record id="quality_plan_reception_1" model="quality.plan1">
+            <field name="name">Contrôle Réception Matières Premières</field>
+            <field name="plan_type">reception</field>
+            <field name="frequency">all_lots</field>
+            <field name="team_id1" ref="quality_team_reception"/>
+            <field name="state">active</field>
+            <field name="description">Contrôle qualité des matières premières à la réception</field>
+        </record>
+
+        <record id="quality_plan_reception_2" model="quality.plan1">
+            <field name="name">Contrôle Réception Fournitures</field>
+            <field name="plan_type">reception</field>
+            <field name="frequency">random</field>
+            <field name="team_id1" ref="quality_team_reception"/>
+            <field name="state">active</field>
+            <field name="description">Contrôle aléatoire des fournitures à la réception</field>
+        </record>
+
+        <!-- Plans de Contrôle pour l'Équipe Production -->
+        <record id="quality_plan_production_1" model="quality.plan1">
+            <field name="name">Contrôle Production Ligne A</field>
+            <field name="plan_type">production</field>
+            <field name="frequency">periodic</field>
+            <field name="frequency_value">2</field>
+            <field name="team_id1" ref="quality_team_production"/>
+            <field name="state">active</field>
+            <field name="description">Contrôle périodique de la ligne de production A</field>
+        </record>
+
+        <record id="quality_plan_production_2" model="quality.plan1">
+            <field name="name">Contrôle Production Ligne B</field>
+            <field name="plan_type">production</field>
+            <field name="frequency">periodic</field>
+            <field name="frequency_value">3</field>
+            <field name="team_id1" ref="quality_team_production"/>
+            <field name="state">draft</field>
+            <field name="description">Contrôle périodique de la ligne de production B</field>
+        </record>
+
+        <!-- Plans de Contrôle pour l'Équipe Livraison -->
+        <record id="quality_plan_delivery_1" model="quality.plan1">
+            <field name="name">Contrôle Livraison Produits Finis</field>
+            <field name="plan_type">delivery</field>
+            <field name="frequency">all_lots</field>
+            <field name="team_id1" ref="quality_team_delivery"/>
+            <field name="state">active</field>
+            <field name="description">Contrôle qualité des produits finis avant livraison</field>
+        </record>
+
+        <record id="quality_plan_delivery_2" model="quality.plan1">
+            <field name="name">Contrôle Emballage</field>
+            <field name="plan_type">delivery</field>
+            <field name="frequency">random</field>
+            <field name="team_id1" ref="quality_team_delivery"/>
+            <field name="state">inactive</field>
+            <field name="description">Contrôle aléatoire de l'emballage</field>
+        </record>
+    </data>
+</odoo>

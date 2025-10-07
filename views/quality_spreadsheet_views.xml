@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- VUES POUR QUALITY.SPREADSHEET.TEMPLATE1 -->
+    
+    <!-- Vue Liste des Templates Spreadsheet -->
+    <record id="view_quality_spreadsheet_template1_tree" model="ir.ui.view">
+        <field name="name">quality.spreadsheet.template1.list</field>
+        <field name="model">quality.spreadsheet.template1</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" string="Templates Spreadsheet Qualité">
+                <field name="name" string="Nom du Template"/>
+                <field name="check_cell" string="Cellule de Succès"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                <field name="spreadsheet_file_name" column_invisible="True"/>
+                <field name="spreadsheet_binary_data" groups="base.group_no_one" widget="binary" filename="spreadsheet_file_name" string="Données" />
+                <button string="Éditer" class="float-end" icon="fa-pencil" type="object" name="action_open_spreadsheet"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Templates Spreadsheet -->
+    <record id="view_quality_spreadsheet_template1_form" model="ir.ui.view">
+        <field name="name">quality.spreadsheet.template1.form</field>
+        <field name="model">quality.spreadsheet.template1</field>
+        <field name="arch" type="xml">
+            <form string="Template Spreadsheet Qualité">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du template..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="name" string="Nom du Template"/>
+                            <field name="check_cell" string="Cellule de Succès" 
+                                   help="La vérification est réussie si la valeur de la cellule de succès est TRUE"/>
+                        </group>
+                        <group string="Société">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Fichier Spreadsheet">
+                        <field name="spreadsheet_file_name" string="Nom du Fichier"/>
+                        <field name="spreadsheet_binary_data" widget="binary" filename="spreadsheet_file_name" string="Données Spreadsheet"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_open_spreadsheet" type="object" string="Éditer Spreadsheet" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Templates Spreadsheet -->
+    <record id="view_quality_spreadsheet_template1_search" model="ir.ui.view">
+        <field name="name">quality.spreadsheet.template1.search</field>
+        <field name="model">quality.spreadsheet.template1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Templates Spreadsheet">
+                <field name="name"/>
+                <field name="check_cell"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Société" name="group_company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action pour les Templates Spreadsheet -->
+    <record id="quality_spreadsheet_template_action_config" model="ir.actions.act_window">
+        <field name="name">Templates Spreadsheet Qualité</field>
+        <field name="res_model">quality.spreadsheet.template1</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_quality_spreadsheet_template1_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez un nouveau template spreadsheet qualité
+            </p>
+            <p>
+                Les templates spreadsheet permettent de créer des modèles
+                de feuilles de calcul pour les contrôles qualité.
+            </p>
+        </field>
+    </record>
+
+    <!-- VUES POUR QUALITY.CHECK.SPREADSHEET1 -->
+    
+    <!-- Vue Liste des Spreadsheets de Contrôle -->
+    <record id="view_quality_check_spreadsheet1_tree" model="ir.ui.view">
+        <field name="name">quality.check.spreadsheet1.list</field>
+        <field name="model">quality.check.spreadsheet1</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" string="Spreadsheets de Contrôle Qualité">
+                <field name="name" string="Nom"/>
+                <field name="quality_check_id" string="Contrôle Qualité"/>
+                <field name="check_cell" string="Cellule de Succès"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="spreadsheet_file_name" column_invisible="True"/>
+                <field name="spreadsheet_binary_data" groups="base.group_no_one" widget="binary" filename="spreadsheet_file_name" string="Données" />
+                <button string="Éditer" class="float-end" icon="fa-pencil" type="object" name="action_open_spreadsheet"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Spreadsheets de Contrôle -->
+    <record id="view_quality_check_spreadsheet1_form" model="ir.ui.view">
+        <field name="name">quality.check.spreadsheet1.form</field>
+        <field name="model">quality.check.spreadsheet1</field>
+        <field name="arch" type="xml">
+            <form string="Spreadsheet de Contrôle Qualité">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du spreadsheet..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="name" string="Nom"/>
+                            <field name="quality_check_id" string="Contrôle Qualité"/>
+                            <field name="check_cell" string="Cellule de Succès" 
+                                   help="La vérification est réussie si la valeur de la cellule de succès est TRUE"/>
+                        </group>
+                        <group string="Société">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Fichier Spreadsheet">
+                        <field name="spreadsheet_file_name" string="Nom du Fichier"/>
+                        <field name="spreadsheet_binary_data" widget="binary" filename="spreadsheet_file_name" string="Données Spreadsheet"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_open_spreadsheet" type="object" string="Éditer Spreadsheet" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Spreadsheets de Contrôle -->
+    <record id="view_quality_check_spreadsheet1_search" model="ir.ui.view">
+        <field name="name">quality.check.spreadsheet1.search</field>
+        <field name="model">quality.check.spreadsheet1</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Spreadsheets de Contrôle">
+                <field name="name"/>
+                <field name="quality_check_id"/>
+                <field name="check_cell"/>
+                <separator/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Contrôle Qualité" name="group_quality_check" context="{'group_by': 'quality_check_id'}"/>
+                    <filter string="Société" name="group_company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action pour les Spreadsheets de Contrôle -->
+    <record id="action_quality_check_spreadsheet1" model="ir.actions.act_window">
+        <field name="name">Spreadsheets de Contrôle Qualité</field>
+        <field name="res_model">quality.check.spreadsheet1</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_quality_check_spreadsheet1_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez un nouveau spreadsheet de contrôle qualité
+            </p>
+            <p>
+                Les spreadsheets de contrôle permettent de créer des feuilles
+                de calcul personnalisées pour les contrôles qualité.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_production_view_form_inherit_quality1" model="ir.ui.view">
+        <field name="name">mrp.production.view.form.inherit.quality1</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <button name="action_cancel" position="before">
+                <!-- Champs cachés pour notre module personnalisé -->
+                <field name="check_ids1" invisible="1"/>
+                <field name="quality_check_todo1" invisible="1"/>
+                <field name="quality_check_fail1" invisible="1"/>
+                <field name="check_count1" invisible="1"/>
+                <field name="quality_alert_count1" invisible="1"/>
+                
+                <!-- Boutons personnalisés avec suffixe 1 pour éviter les conflits -->
+                <button string="Contrôles Qualité" name="check_quality1" type="object" class="oe_highlight" data-hotkey="shift+z"
+                        invisible="not quality_check_todo1 or state in ('done', 'cancel')" groups="quality_management.group_quality_user"/>
+                <button string="Créer Contrôles Qualité" name="create_quality_checks1" type="object" class="btn-secondary"
+                        invisible="state in ('done', 'cancel')" groups="quality_management.group_quality_user"/>
+                <button string="Debug Points" name="debug_quality_points1" type="object" class="btn-info"
+                        invisible="state in ('done', 'cancel')" groups="quality_management.group_quality_user"/>
+                <button name="button_quality_alert1" groups="quality_management.group_quality_user" type="object" string="Alerte Qualité" context="{'default_production_id1': id}" class="oe_highlight" invisible="not quality_check_fail1 or quality_alert_count1 != 0" data-hotkey="shift+q"/>
+            </button>
+            <div name="button_box" position="inside">
+                <button name="open_quality_alert_mo1" groups="quality_management.group_quality_user" type="object" class="oe_stat_button" icon="fa-bell" invisible="quality_alert_count1 == 0">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="quality_alert_count1"/></span>
+                        <span class="o_stat_text">Alerte Qualité</span>
+                    </div>
+                </button>
+                <!-- Bouton Contrôles Qualité - En cours (orange) -->
+                <button name="%(quality_check_action_mo1)d" groups="quality_management.group_quality_user" 
+                        invisible="not check_ids1 or quality_check_fail1 or not quality_check_todo1" 
+                        type="action" class="oe_stat_button" icon="fa-check">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="check_count1"/></span>
+                        <span class="o_stat_text">Contrôles Qualité</span>
+                    </div>
+                </button>
+                <!-- Bouton Contrôles Qualité - Tous réussis (vert) -->
+                <button name="%(quality_check_action_mo1)d" groups="quality_management.group_quality_user" 
+                        invisible="not check_ids1 or quality_check_fail1 or quality_check_todo1" 
+                        type="action" class="oe_stat_button text-success" icon="fa-check">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="check_count1"/></span>
+                        <span class="o_stat_text text-success">Contrôles Qualité</span>
+                    </div>
+                </button>
+                <!-- Bouton Contrôles Qualité - Au moins un échec (rouge) -->
+                <button name="%(quality_check_action_mo1)d" groups="quality_management.group_quality_user" 
+                        invisible="not check_ids1 or not quality_check_fail1" 
+                        type="action" class="oe_stat_button text-danger" icon="fa-check">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="check_count1"/></span>
+                        <span class="o_stat_text text-danger">Contrôles Qualité</span>
+                    </div>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <record id="mrp_production_view_tree_inherit_quality1" model="ir.ui.view">
+        <field name="name">mrp.production.view.tree.inherit.quality1</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="field[@name='company_id']" position="after">
+                <field name="quality_check_todo1" column_invisible="True"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
