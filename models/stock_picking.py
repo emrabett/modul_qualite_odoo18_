@@ -55,7 +55,11 @@ class StockPicking(models.Model):
         self.ensure_one()
         checks = self.check_ids1.filtered(lambda x: x.quality_state == 'none')
         if checks:
-            return checks.action_open_quality_check_wizard()
+            # Debug : Vérifier les valeurs
+            print(f"DEBUG - Checks trouvés: {len(checks)}")
+            for check in checks:
+                print(f"DEBUG - Check {check.id}: quality_state={check.quality_state}, test_type={check.test_type}")
+            return checks.action_open_quality_check_wizard1()
         return False
 
     def button_quality_alert1(self):
@@ -64,11 +68,11 @@ class StockPicking(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Alerte Qualité',
-            'res_model': 'quality.alert1',
+            'res_model': 'quality.alert1',  # ✅ Avec suffixe "1"
             'view_mode': 'form',
             'target': 'new',
             'context': {
-                'default_picking_id1': self.id,
+                'default_picking_id1': self.id,  # ✅ Avec suffixe "1"
             }
         }
 
@@ -92,28 +96,37 @@ class StockPicking(models.Model):
             'domain': [('picking_id1', '=', self.id)],
         }
 
-    def _check_qc_status(self):
+    def action_open_on_demand_quality_check1(self):
+        """Ouvrir le wizard de contrôle qualité à la demande"""
+        self.ensure_one()
+        return {
+            'name': 'Contrôle Qualité à la Demande',
+            'type': 'ir.actions.act_window',
+            'res_model': 'quality.check.on.demand1',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_picking_id1': self.id,
+            }
+        }
+
+    # ✅ Méthode personnalisée - GARDER le suffixe "1"
+    def _check_qc_status1(self):
         """Vérifier le statut des contrôles qualité"""
         self.ensure_one()
         if not self.check_ids1:
-            return True  # Pas de contrôles qualité requis
-        
-        # Vérifier s'il y a des contrôles en attente
+            return True
         pending_checks = self.check_ids1.filtered(lambda x: x.quality_state == 'none')
         if pending_checks:
-            return False  # Des contrôles sont en attente
-        
-        return True  # Tous les contrôles sont terminés
+            return False
+        return True
 
+    # ✅ NE PAS renommer - méthode standard Odoo
     def button_validate(self):
         """Surcharger la validation pour vérifier les contrôles qualité"""
-        # Vérifier les contrôles qualité avant validation
         for picking in self:
-            if not picking._check_qc_status():
+            if not picking._check_qc_status1():  # ✅ Appel méthode personnalisée avec "1"
                 raise UserError(_(
-                    
                     'Vous devez compléter les contrôles qualité avant de valider ce transfert.'
                 ))
-        
-        # Appeler la méthode parent
-        return super().button_validate()
+        return super().button_validate()  # ✅ Appel méthode parent SANS "1"

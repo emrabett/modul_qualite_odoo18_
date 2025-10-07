@@ -9,23 +9,23 @@ class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
     check_ids1 = fields.One2many('quality.check1', 'production_id1', string="Contrôles Personnels")
-    check_count1 = fields.Integer('Nombre de contrôles', compute='_compute_check', store=True)
-    quality_check_todo1 = fields.Boolean(compute='_compute_check', store=True)
-    quality_check_fail1 = fields.Boolean(compute='_compute_check', store=True)
+    check_count1 = fields.Integer('Nombre de contrôles', compute='_compute_check1', store=True)
+    quality_check_todo1 = fields.Boolean(compute='_compute_check1', store=True)
+    quality_check_fail1 = fields.Boolean(compute='_compute_check1', store=True)
     quality_alert_ids1 = fields.One2many('quality.alert1', "production_id1", string="Alertes")
-    quality_alert_count1 = fields.Integer(compute='_compute_quality_alert_count', store=True)
+    quality_alert_count1 = fields.Integer(compute='_compute_quality_alert_count1', store=True)
 
     # Champs personnalisés avec suffixe 1 pour éviter les conflits avec Enterprise
 
     @api.depends('quality_alert_ids1')
-    def _compute_quality_alert_count(self):
+    def _compute_quality_alert_count1(self):
         for production in self:
             production.quality_alert_count1 = len(production.quality_alert_ids1)
 
-    @api.depends('check_ids1.quality_state')
-    def _compute_check(self):
+    @api.depends('check_ids1.quality_state')    
+    def _compute_check1(self):
         for production in self:
-            print(f"=== DEBUG _compute_check ===")
+            print(f"=== DEBUG _compute_check1 ===")
             print(f"OF: {production.name}")
             print(f"check_ids1 count: {len(production.check_ids1)}")
             
@@ -47,36 +47,38 @@ class MrpProduction(models.Model):
             print(f"quality_check_fail1: {production.quality_check_fail1}")
             print(f"check_count1: {production.check_count1}")
 
-    def _create_quality_checks_if_needed(self):
+    def _create_quality_checks_if_needed1(self):
         """Créer les contrôles qualité si nécessaire"""
         if self.state in ['confirmed', 'progress', 'to_close']:
             # Vérifier s'il y a déjà des contrôles qualité du module personnel
             personal_checks = self.check_ids1.filtered(lambda c: c.point_id1)
             if not personal_checks:
-                (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo()
+                (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo1()
 
     def button_quality_alert1(self):
+        """Créer une alerte qualité pour l'ordre de fabrication"""
         self.ensure_one()
-        action = self.env["ir.actions.actions"]._for_xml_id("quality_management.action_quality_alert1")
-        action['views'] = [(False, 'form')]
-        action['context'] = {
-            'default_company_id': self.company_id.id,
-            'default_product_id': self.product_id.id,
-            'default_product_tmpl_id': self.product_id.product_tmpl_id.id,
-            'default_production_id1': self.id,
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Alerte Qualité',
+            'res_model': 'quality.alert1',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_production_id1': self.id,
+            }
         }
-        return action
 
-    def pre_button_mark_done(self):
-        res = super().pre_button_mark_done()
+    def pre_button_mark_done1(self):
+        res = super().pre_button_mark_done1()
         if isinstance(res, dict) and res.get('type') == 'ir.actions.act_window':
             return res
-        is_qc_status_ok = self._check_qc_status()
+        is_qc_status_ok = self._check_qc_status1()
         if not is_qc_status_ok:
             raise UserError(_('Opération invalide\n\nVous devez compléter les contrôles qualité dans l\'application Atelier avant de marquer l\'ordre de travail comme terminé.'))
         return res
 
-    def _check_qc_status(self):
+    def _check_qc_status1(self):
         return 'none' not in self.check_ids1.mapped('quality_state')
 
     def open_quality_alert_mo1(self):
@@ -109,29 +111,29 @@ class MrpProduction(models.Model):
             print(f"  Contrôle {check.id}: state={check.quality_state}, point={check.point_id1.name if check.point_id1 else 'None'}")
         
         if checks:
-            action = checks.action_open_quality_check_wizard()
+            action = checks.action_open_quality_check_wizard1()
             print(f"Action retournée: {action}")
             return action
         else:
             print("Aucun contrôle trouvé avec state=none")
             return False
 
-    def action_cancel(self):
-        res = super(MrpProduction, self).action_cancel()
+    def action_cancel1(self):
+        res = super(MrpProduction, self).action_cancel1()
         self.sudo().mapped('check_ids1').filtered(lambda x: x.quality_state == 'none').unlink()
         return res
 
-    def action_confirm(self):
-        res = super().action_confirm()
+    def action_confirm1(self):
+        res = super().action_confirm1()
         # Créer les contrôles qualité seulement si pas déjà créés par le module enterprise
         if not self.check_ids1:
-            (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo()
+            (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo1()
         return res
 
 
-    def _action_confirm_mo_backorders(self):
-        super()._action_confirm_mo_backorders()
-        (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo()
+    def _action_confirm_mo_backorders1(self):
+        super()._action_confirm_mo_backorders1()
+        (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo1()
 
     def create_quality_checks1(self):
         """Créer manuellement les contrôles qualité pour un OF"""

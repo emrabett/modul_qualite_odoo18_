@@ -58,11 +58,11 @@
                         invisible="quality_state != 'none' or test_type != 'measure'" data-hotkey="q"/>
                     <button name="do_pass" type="object" class="btn-primary" string="Valider"
                         invisible="quality_state != 'none' or test_type not in ('picture', 'instructions')" data-hotkey="w"/>
-                    <button name="do_pass" type="object" class="btn-success " string="Réussi"
+                    <button name="do_pass" type="object" class="btn-success" string="Réussi"
                         invisible="quality_state != 'none' or test_type != 'passfail'" data-hotkey="w"/>
                     <button name="do_fail" type="object" class="btn-danger" string="Échoué"
                         invisible="quality_state != 'none' or test_type != 'passfail'" data-hotkey="k"/>
-                    <button name="action_open_spreadsheet" type="object" class="btn-primary " string="Ouvrir feuille de calcul"
+                    <button name="action_open_spreadsheet" type="object" class="btn-primary" string="Ouvrir feuille de calcul"
                         invisible="test_type != 'spreadsheet'" data-hotkey="w"/>
                     <button name="action_generate_previous_window" type="object" class="btn-secondary" string="Précédent" invisible="position_current_check == 1"/>
                     <button name="action_generate_next_window" type="object" class="btn-secondary" string="Suivant" invisible="is_last_check"/>
@@ -94,8 +94,8 @@
                         <field name="lot_line_id" string="Lot/SN" invisible="show_lot_text or product_tracking == 'none'"/>
                         <field name="failure_location_id" invisible="not potential_failure_location_ids" widget="selection_badge" domain="[('id', 'in', potential_failure_location_ids)]"/>
                     </group>
-                    <group >
-                        <div class="alert" role="alert" colspan="2" invisible="test_type != 'measure'" >
+                    <group>
+                        <div class="alert" role="alert" colspan="2" invisible="test_type != 'measure'">
                             <field name="warning_message" nolabel="1"/>
                         </div>
                         <div colspan="2">
@@ -104,7 +104,6 @@
                     </group>
                 </group>
                 <footer>
-
                     <button name="confirm_measure" type="object" class="btn-primary" string="Confirmer Mesure"
                         invisible="test_type != 'measure'" data-hotkey="w"/>
                     <button name="confirm_fail" type="object" class="btn-primary" string="Confirmer"

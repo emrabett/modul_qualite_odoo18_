@@ -42,6 +42,7 @@ Ce module fournit une solution personnalisée et indépendante pour la gestion d
         'mail',
         'stock',
         'mrp',
+        'maintenance',  # ✅ Nécessaire pour l'intégration
     ],
     'data': [
         'security/quality_security.xml',
@@ -66,10 +67,10 @@ Ce module fournit une solution personnalisée et indépendante pour la gestion d
         'views/stock_move_line_views.xml',  # Désactivé - erreurs Bootstrap  
         'views/stock_lot_views.xml',  # Désactivé - erreurs Bootstrap
         'views/mrp_production_views.xml',
-        'views/wizard_quality_check_views.xml',
-        'views/wizard_on_demand_quality_check_views.xml',
         'wizard/quality_check_wizard_views.xml',
+        'views/wizard_on_demand_quality_check_views.xml',
         'views/quality_menu_views.xml',
+        'views/quality_actions.xml',
     ],
     'demo': [],
     'installable': True,

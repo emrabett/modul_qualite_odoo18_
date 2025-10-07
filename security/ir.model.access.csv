@@ -37,3 +37,11 @@ access_quality_check_wizard1_user,quality.check.wizard1.user,model_quality_check
 access_quality_check_wizard1_operator,quality.check.wizard1.operator,model_quality_check_wizard1,group_quality_operator,1,1,1,1
 access_quality_check_wizard1_manager,quality.check.wizard1.manager,model_quality_check_wizard1,group_quality_manager,1,1,1,1
 access_quality_check_wizard1_director,quality.check.wizard1.director,model_quality_check_wizard1,group_quality_director,1,1,1,1
+access_quality_reason1_user,quality.reason1.user,model_quality_reason1,group_quality_user,1,0,0,0
+access_quality_reason1_operator,quality.reason1.operator,model_quality_reason1,group_quality_operator,1,1,1,0
+access_quality_reason1_manager,quality.reason1.manager,model_quality_reason1,group_quality_manager,1,1,1,1
+access_quality_reason1_director,quality.reason1.director,model_quality_reason1,group_quality_director,1,1,1,1
+access_quality_check_on_demand1_user,quality.check.on.demand1.user,model_quality_check_on_demand1,group_quality_user,1,1,1,1
+access_quality_check_on_demand1_operator,quality.check.on.demand1.operator,model_quality_check_on_demand1,group_quality_operator,1,1,1,1
+access_quality_check_on_demand1_manager,quality.check.on.demand1.manager,model_quality_check_on_demand1,group_quality_manager,1,1,1,1
+access_quality_check_on_demand1_director,quality.check.on.demand1.director,model_quality_check_on_demand1,group_quality_director,1,1,1,1

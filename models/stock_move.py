@@ -8,33 +8,21 @@ from odoo import models
 class StockMove(models.Model):
     _inherit = "stock.move"
 
+    # ✅ ENLEVER le "1"
     def _action_confirm(self, merge=True, merge_into=False):
-        print(f"=== DEBUG _action_confirm ===")
-        print(f"Mouvements à confirmer: {len(self)}")
         moves = super(StockMove, self)._action_confirm(merge=merge, merge_into=merge_into)
-        print(f"Mouvements confirmés: {len(moves)}")
-        moves._create_quality_checks()
-        print("Appel de _create_quality_checks_for_mo()")
-        print(f"Type de moves: {type(moves)}")
-        print(f"Méthode disponible: {hasattr(moves, '_create_quality_checks_for_mo')}")
-        try:
-            print("=== AVANT APPEL _create_quality_checks_for_mo ===")
-            moves._create_quality_checks_for_mo()
-            print("=== APRÈS APPEL _create_quality_checks_for_mo ===")
-            print("_create_quality_checks_for_mo() terminé avec succès")
-        except Exception as e:
-            print(f"ERREUR dans _create_quality_checks_for_mo: {e}")
-            import traceback
-            traceback.print_exc()
+        moves._create_quality_checks1()  # ✅ Garder le "1" ici
+        moves._create_quality_checks_for_mo1()  # ✅ Garder le "1" ici
         return moves
 
-    def _create_quality_checks(self):
+    # ✅ Méthode personnalisée - GARDER le suffixe "1"
+    def _create_quality_checks1(self):
         # Grouper les mouvements par picking. Utiliser pour générer les contrôles qualité manquants.
         pick_moves = defaultdict(lambda: self.env['stock.move'])
         for move in self:
             if move.picking_id and not move.scrapped:
                 pick_moves[move.picking_id] |= move
-        check_vals_list = self._create_operation_quality_checks(pick_moves)
+        check_vals_list = self._create_operation_quality_checks1(pick_moves)
         for picking, moves in pick_moves.items():
             # Contrôles qualité par produit
             quality_points_domain = self.env['quality.point1']._get_domain(moves.product_id, picking.picking_type_id, measure_on='product')
@@ -50,7 +38,8 @@ class StockMove(models.Model):
             check_vals_list += picking_check_vals_list
         self.env['quality.check1'].sudo().create(check_vals_list)
 
-    def _create_operation_quality_checks(self, pick_moves):
+    # ✅ Méthode personnalisée - GARDER le suffixe "1"
+    def _create_operation_quality_checks1(self, pick_moves):
         check_vals_list = []
         for picking, moves in pick_moves.items():
             quality_points_domain = self.env['quality.point1']._get_domain(moves.product_id, picking.picking_type_id, measure_on='operation')
@@ -65,6 +54,7 @@ class StockMove(models.Model):
                     })
         return check_vals_list
 
+    # ✅ ENLEVER le "1"
     def _action_cancel(self):
         res = super()._action_cancel()
 
@@ -84,57 +74,17 @@ class StockMove(models.Model):
 
         return res
 
-    def _create_quality_checks_for_mo(self):
+    # ✅ Méthode personnalisée - GARDER le suffixe "1"
+    def _create_quality_checks_for_mo1(self):
         """Créer les contrôles qualité pour les ordres de fabrication"""
-        check_vals_list = []
-        productions_done = set()
-        
-        for move in self:
-            if move.production_id and not move.scrapped and move.production_id.id not in productions_done:
-                production = move.production_id
-                productions_done.add(production.id)
-                
-                # Chercher TOUS les points de contrôle qualité actifs
-                quality_points = self.env['quality.point1'].sudo().search([
-                    ('active', '=', True),
-                    '|', ('state', '=', False), ('state', '=', 'active'),  # Accepter aussi si pas de state défini
-                    ('measure_frequency_type', '!=', 'on_demand'),
-                ])
-                
-                for point in quality_points:
-                    # Vérifier si le point s'applique au produit de l'OF
-                    if point.product_ids:
-                        if production.product_id not in point.product_ids:
-                            continue
-                    
-                    # Vérifier si le point doit être exécuté maintenant
-                    if point.check_execute_now():
-                        check_vals = {
-                            'point_id1': point.id,
-                            'team_id1': point.team_id1.id if point.team_id1 else False,
-                            'product_id': production.product_id.id,
-                            'production_id1': production.id,
-                            'measure_on': point.measure_on,
-                        }
-                        check_vals_list.append(check_vals)
-        
-        if check_vals_list:
-            self.env['quality.check1'].sudo().create(check_vals_list)
-
-    def _search_quality_points1(self, product_id, picking_type_id, measure_on):
-        quality_points_domain = self.env['quality.point1']._get_domain(product_id, picking_type_id, measure_on=measure_on)
-        quality_points_domain = self.env['quality.point1']._get_domain_for_production(quality_points_domain)
-        return self.env['quality.point1'].sudo().search(quality_points_domain)
-
-    def _create_quality_checks_for_mo(self):
         print(f"=== NOUVELLE VERSION CHARGÉE ===")
-        print(f"=== DEBUG _create_quality_checks_for_mo DEBUT ===")
+        print(f"=== DEBUG _create_quality_checks_for_mo1 DEBUT ===")
         try:
-            print(f"=== DEBUG _create_quality_checks_for_mo - DANS TRY ===")
+            print(f"=== DEBUG _create_quality_checks_for_mo1 - DANS TRY ===")
             # Grouper les mouvements par ordre de fabrication. Utiliser pour générer les contrôles qualité manquants.
             mo_moves = defaultdict(lambda: self.env['stock.move'])
             check_vals_list = []
-            print(f"=== DEBUG _create_quality_checks_for_mo ===")
+            print(f"=== DEBUG _create_quality_checks_for_mo1 ===")
             print(f"Mouvements à traiter: {len(self)}")
             for move in self:
                 if move.production_id and not move.scrapped:
@@ -190,6 +140,12 @@ class StockMove(models.Model):
             else:
                 print("Aucun contrôle à créer")
         except Exception as e:
-            print(f"ERREUR dans _create_quality_checks_for_mo: {e}")
+            print(f"ERREUR dans _create_quality_checks_for_mo1: {e}")
             import traceback
             traceback.print_exc()
+
+    # ✅ Méthode personnalisée - GARDER le suffixe "1"
+    def _search_quality_points1(self, product_id, picking_type_id, measure_on):
+        quality_points_domain = self.env['quality.point1']._get_domain(product_id, picking_type_id, measure_on=measure_on)
+        quality_points_domain = self.env['quality.point1']._get_domain_for_production(quality_points_domain)
+        return self.env['quality.point1'].sudo().search(quality_points_domain)

@@ -299,7 +299,7 @@ class QualityCheck1(models.Model):
             action['context'] = dict(self._context, default_check_id1=self.id)
             return action
 
-    def action_open_quality_check_wizard(self, current_check_id=None):
+    def action_open_quality_check_wizard1(self, current_check_id=None):
         check_ids = sorted(self.ids)
         action = self.env["ir.actions.actions"]._for_xml_id("quality_management.action_quality_check_wizard1")
         check_id = self.browse(current_check_id or check_ids[0])
