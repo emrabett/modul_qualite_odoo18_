@@ -69,16 +69,17 @@ class MrpProduction(models.Model):
             }
         }
 
-    def pre_button_mark_done1(self):
-        res = super().pre_button_mark_done1()
-        if isinstance(res, dict) and res.get('type') == 'ir.actions.act_window':
-            return res
+    def button_mark_done(self):
+        """Surcharge de la méthode standard pour vérifier les contrôles qualité personnalisés"""
+        # Vérifier d'abord les contrôles qualité personnalisés
         is_qc_status_ok = self._check_qc_status1()
         if not is_qc_status_ok:
             raise UserError(_('Opération invalide\n\nVous devez compléter les contrôles qualité dans l\'application Atelier avant de marquer l\'ordre de travail comme terminé.'))
-        return res
+        # Appeler la méthode parent (standard Odoo)
+        return super().button_mark_done()
 
     def _check_qc_status1(self):
+        """Vérifier si tous les contrôles qualité personnalisés sont complétés"""
         return 'none' not in self.check_ids1.mapped('quality_state')
 
     def open_quality_alert_mo1(self):
@@ -118,22 +119,33 @@ class MrpProduction(models.Model):
             print("Aucun contrôle trouvé avec state=none")
             return False
 
-    def action_cancel1(self):
-        res = super(MrpProduction, self).action_cancel1()
+    def action_cancel(self):
+        """Surcharge pour supprimer les contrôles qualité personnalisés non complétés"""
+        # Supprimer les contrôles qualité personnalisés non complétés
         self.sudo().mapped('check_ids1').filtered(lambda x: x.quality_state == 'none').unlink()
+        # Appeler la méthode parent (standard Odoo)
+        return super(MrpProduction, self).action_cancel()
+
+    def action_confirm(self):
+        """Surcharge pour créer les contrôles qualité personnalisés"""
+        # Appeler la méthode parent (standard Odoo)
+        res = super().action_confirm()
+        # Créer les contrôles qualité personnalisés seulement si pas déjà créés
+        if not self.check_ids1:
+            # Vérifier si la méthode existe (pour éviter les erreurs si stock_move n'est pas étendu)
+            if hasattr(self.move_raw_ids, '_create_quality_checks_for_mo1'):
+                (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo1()
         return res
 
-    def action_confirm1(self):
-        res = super().action_confirm1()
-        # Créer les contrôles qualité seulement si pas déjà créés par le module enterprise
-        if not self.check_ids1:
+    def _action_confirm_mo_backorders(self):
+        """Surcharge pour créer les contrôles qualité personnalisés pour les backorders"""
+        # Appeler la méthode parent (standard Odoo)
+        res = super()._action_confirm_mo_backorders()
+        # Créer les contrôles qualité personnalisés pour les backorders
+        # Vérifier si la méthode existe (pour éviter les erreurs si stock_move n'est pas étendu)
+        if hasattr(self.move_raw_ids, '_create_quality_checks_for_mo1'):
             (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo1()
         return res
-
-
-    def _action_confirm_mo_backorders1(self):
-        super()._action_confirm_mo_backorders1()
-        (self.move_raw_ids | self.move_finished_ids)._create_quality_checks_for_mo1()
 
     def create_quality_checks1(self):
         """Créer manuellement les contrôles qualité pour un OF"""

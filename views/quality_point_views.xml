@@ -60,8 +60,11 @@
                             <field name="measure_frequency_type"/>
                             <field string="Type" name="test_type_id" options="{'no_open': True, 'no_create': True}"/>
                             <field name="team_id1" options="{'no_open': True, 'no_create': True}"/>
-                            
-                            <!-- <field name="sequence"/> -->
+                            <field name="failure_location_ids" 
+                                   invisible="measure_on != 'move_line'" 
+                                   groups="stock.group_stock_multi_locations" 
+                                   widget="many2many_tags"
+                                   string="Emplacements d'Échec"/>
                         </group>
                     </group>
                     
@@ -88,6 +91,15 @@
                             <field name="measure_frequency_unit" invisible="measure_frequency_type != 'periodical'"/>
                         </group>
                     
+                    
+                    <group invisible="measure_on != 'move_line'">
+                        <label for="testing_percentage_within_lot" string="Test Partiel"/>
+                        <div class="o_row">
+                            <span>Tester </span>
+                            <field name="testing_percentage_within_lot" nolabel="1"/>
+                            <span>% des produits</span>
+                        </div>
+                    </group>
                     
                     <notebook>
                         <page string="Instructions" name="instructions">
